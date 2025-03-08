@@ -1,0 +1,29 @@
+services:
+  inventory-db:
+    image: postgres:17
+    container_name: c-db-inventory
+    ports:
+      - "${DB_PORT}:5432"
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_DATABASE}
+      PGDATA: /postgres-data
+
+  s-products:
+    container_name: c-s-products
+    build: .
+    volumes:
+      - ./src:/usr/src/app/src
+    command: npm run start:dev
+    environment:
+      - PORT=${PORT}
+      - NODE_ENV=${NODE_ENV}
+      - DB_DIALECT=${DB_DIALECT}
+      - DB_HOST=inventory-db
+      - DB_PORT=5432
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_DATABASE=${DB_DATABASE}
