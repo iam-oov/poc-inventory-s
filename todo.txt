@@ -1,0 +1,4 @@
+- slug en el nombre de la tienda
+- cambiar location por latitud y longitud
+- una interfaz global para { id: number }
+- entender muy bien que es "dominio, infraestructura, aplication"

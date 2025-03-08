@@ -3,7 +3,6 @@ import { DataSource } from 'typeorm';
 import { join } from 'path';
 
 import { envs } from './configs';
-console.log('🚀 ~ envs:', envs.db);
 
 export const AppDataSource = new DataSource({
   type: envs.db.dialect as any,

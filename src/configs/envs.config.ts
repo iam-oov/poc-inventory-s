@@ -16,6 +16,7 @@ interface IEnvVars {
   DB_USERNAME: string;
   PORT: number;
   NODE_ENV: string;
+  IS_DEV: boolean;
 }
 
 // valid values for dialect and environment
@@ -38,12 +39,14 @@ const envVarsSchema = joi
       .valid(...dialectValues)
       .required(),
     PORT: joi.number().required(),
+    IS_DEV: joi.boolean(),
   })
   .unknown(true);
 
 // validate environment variables
 const { error, value } = envVarsSchema.validate({
   ...process.env,
+  IS_DEV: NODE_ENV === DEVELOPMENT,
 });
 
 if (error) {
@@ -57,6 +60,7 @@ const envVars: IEnvVars = value;
 export const envs = {
   port: envVars.PORT,
   nodeEnv: envVars.NODE_ENV,
+  isDev: envVars.IS_DEV,
   db: {
     dialect: envVars.DB_DIALECT,
     host: envVars.DB_HOST,
