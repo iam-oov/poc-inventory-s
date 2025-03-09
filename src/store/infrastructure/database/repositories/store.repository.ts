@@ -6,6 +6,7 @@ import { IStoreRepository } from '../../../domain/repositories/store.repository.
 import { StoreEntity } from '../../../../shared/infrastructure/database/entities';
 import { StoreModel } from '../../../domain/models';
 import { DB } from '../../../../utils/constants';
+import { convertToSlug } from '../../../../utils/strings.util';
 
 @Injectable()
 export class StoreRepository implements IStoreRepository {
@@ -44,10 +45,22 @@ export class StoreRepository implements IStoreRepository {
     await this.storeEntityRepository.delete(id);
   }
 
+  async findByName(name: string): Promise<StoreModel | null> {
+    const slug = convertToSlug(name);
+    const entity = await this.storeEntityRepository.findOne({
+      where: { slug },
+    });
+    if (!entity) {
+      return null;
+    }
+    return this.mapToDomain(entity);
+  }
+
   private mapToDomain(entity: StoreEntity): StoreModel {
     return new StoreModel(
       entity.name,
-      entity.location,
+      entity.lat,
+      entity.lng,
       entity.isActive,
       entity.createdAt,
       entity.updatedAt,
@@ -58,8 +71,10 @@ export class StoreRepository implements IStoreRepository {
   private mapToEntity(store: StoreModel): StoreEntity {
     const entity = new StoreEntity();
     entity.id = store.id;
-    entity.name = store.name;
-    entity.location = store.location;
+    entity.name = store.name ?? entity.name;
+    entity.slug = store.name ? convertToSlug(store.name) : entity.slug;
+    entity.lat = store.lat ?? entity.lat;
+    entity.lng = store.lng ?? entity.lng;
     entity.isActive = store.isActive;
     entity.createdAt = store.createdAt;
     entity.updatedAt = store.updatedAt;

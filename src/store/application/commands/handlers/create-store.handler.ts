@@ -1,10 +1,11 @@
 import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
-import { Inject } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject } from '@nestjs/common';
 
-import { CreateStoreCommand } from '../create-store.command';
+import { CreateStoreCommand } from '../implementations/create-store.command';
 import { IStoreRepository } from '../../../domain/repositories';
 import { StoreModel } from '../../../domain/models';
-import { StoreCreatedEvent } from '../../events';
+import { StoreCreatedEvent } from '../../events/implementatios';
+import { formatMessage, TEXTS } from '../../../../utils/constants';
 
 @CommandHandler(CreateStoreCommand)
 export class CreateStoreHandler implements ICommandHandler<CreateStoreCommand> {
@@ -15,24 +16,44 @@ export class CreateStoreHandler implements ICommandHandler<CreateStoreCommand> {
   ) {}
 
   async execute(command: CreateStoreCommand): Promise<{ id: number }> {
-    const { name, location } = command.createStoreDto;
+    const { name, lat, lng } = command.createStoreDto;
+
+    // validate if store with the same name already exists
+    const existingStore = await this.storeRepository.findByName(name);
+    if (existingStore) {
+      throw new HttpException(
+        {
+          message: formatMessage(TEXTS.ERROR.STORE_NAME_ALREADY_EXISTS, {
+            name,
+          }),
+          code: 'crstha32-1955',
+        },
+        HttpStatus.CONFLICT,
+      );
+    }
 
     const now = new Date();
     const store = new StoreModel(
       name,
-      location,
+      lat,
+      lng,
       true, // stores are active by default
       now,
       now,
     );
 
-    const storeObj = await this.storeRepository.save(store);
+    const newStore = await this.storeRepository.save(store);
 
     // publish event
     this.eventBus.publish(
-      new StoreCreatedEvent(store.name, store.location, storeObj.id),
+      new StoreCreatedEvent({
+        name: store.name,
+        lat: store.lat,
+        lng: store.lng,
+        id: newStore.id,
+      }),
     );
 
-    return { id: storeObj.id };
+    return { id: newStore.id };
   }
 }

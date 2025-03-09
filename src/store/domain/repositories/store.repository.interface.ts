@@ -6,4 +6,5 @@ export interface IStoreRepository {
   findActiveStores(): Promise<StoreModel[]>;
   save(store: StoreModel): Promise<StoreModel>;
   delete(id: string): Promise<void>;
+  findByName(name: string): Promise<StoreModel | null>;
 }

@@ -1,8 +1,21 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Patch,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 
-import { CreateStoreDto } from '../../application/dtos';
-import { CreateStoreCommand } from '../../application/commands';
+import { CreateStoreDto, UpdateStoreDto } from '../../application/dtos';
+import {
+  CreateStoreCommand,
+  UpdateStoreCommand,
+} from '../../application/commands/implementations';
+import { ICreateStoreResponse } from '../interfaces';
 
 @Controller('v1/stores')
 export class StoreController {
@@ -15,27 +28,23 @@ export class StoreController {
   @HttpCode(HttpStatus.CREATED)
   async createStore(
     @Body() createStoreDto: CreateStoreDto,
-  ): Promise<{ id: number }> {
+  ): Promise<ICreateStoreResponse> {
     const newStore = await this.commandBus.execute(
       new CreateStoreCommand(createStoreDto),
     );
-    console.log('🚀 ~ StoreController ~ newStore:', newStore);
-    return { id: newStore.id };
+    return { data: { id: newStore.id } };
   }
 
-  // @Put(':id')
-  // async updateStore(
-  //   @Param('id') id: string,
-  //   @Body() dto: UpdateStoreDto,
-  // ): Promise<void> {
-  //   const command = new UpdateStoreCommand(
-  //     id,
-  //     dto.name,
-  //     dto.description,
-  //     dto.address,
-  //   );
-  //   await this.commandBus.execute(command);
-  // }
+  @Patch(':id')
+  async updateStore(
+    @Param('id') id: number,
+    @Body() updateStoreDto: UpdateStoreDto,
+  ): Promise<ICreateStoreResponse> {
+    const updatedStore = await this.commandBus.execute(
+      new UpdateStoreCommand(id, updateStoreDto),
+    );
+    return { data: { id: updatedStore.id } };
+  }
 
   // @Put(':id/activate')
   // async activateStore(@Param('id') id: string): Promise<void> {

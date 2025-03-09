@@ -16,13 +16,19 @@ export class StoreEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'text', nullable: false })
+  @Column({ type: 'text' })
   name: string;
 
-  @Column({ type: 'text', nullable: true })
-  location: string;
+  @Column({ type: 'text' })
+  slug: string;
 
-  @Column({ type: 'boolean', nullable: false })
+  @Column({ type: 'decimal', precision: 10, scale: 8 })
+  lat: number;
+
+  @Column({ type: 'decimal', precision: 11, scale: 8 })
+  lng: number;
+
+  @Column({ type: 'boolean' })
   isActive: boolean;
 
   @CreateDateColumn()

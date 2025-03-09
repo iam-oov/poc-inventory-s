@@ -7,13 +7,17 @@ import { StoreController } from './infrastructure/controllers';
 import { StoreRepository } from './infrastructure/database/repositories';
 import {
   CreateStoreHandler,
-  StoreCreatedHandler,
+  UpdateStoreHandler,
 } from './application/commands/handlers';
 import { DB } from '../utils/constants';
+import {
+  StoreCreatedHandler,
+  StoreUpdatedHandler,
+} from './application/events/handlers';
 
 const CommandHandlers = [
   CreateStoreHandler,
-  // UpdateStoreHandler,
+  UpdateStoreHandler,
   // ActivateStoreHandler,
   // DeactivateStoreHandler
 ];
@@ -22,10 +26,7 @@ const QueryHandlers = [
   // GetStoresByOwnerHandler,
   // GetActiveStoresHandler
 ];
-const EventHandlers = [
-  StoreCreatedHandler,
-  // StoreUpdatedHandler
-];
+const EventHandlers = [StoreCreatedHandler, StoreUpdatedHandler];
 
 @Module({
   imports: [
