@@ -1,4 +1,3 @@
-export * from './category.entity';
-export * from './product-transfer.entity';
+export * from './movement.entity';
 export * from './product.entity';
-export * from './store.entity';
+export * from './inventory.entity';

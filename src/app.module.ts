@@ -4,7 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { DB } from './utils/constants';
 import { envs } from './configs';
-import { StoreModule } from './store/store.module';
+import { ProductModule } from './products/product.module';
 
 @Module({
   imports: [
@@ -32,7 +32,7 @@ import { StoreModule } from './store/store.module';
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: false,
     }),
-    StoreModule,
+    ProductModule,
   ],
   controllers: [],
 })

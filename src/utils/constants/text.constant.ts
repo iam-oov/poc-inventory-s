@@ -1,7 +1,7 @@
 const TEXTS = {
   ERROR: {
-    STORE_NAME_ALREADY_EXISTS: 'Store with name <{name}> already exists',
-    STORE_NOT_FOUND: 'Store with ID <{id}> not found',
+    PRODUCT_NAME_ALREADY_EXISTS: 'Product with name <{name}> already exists',
+    PRODUCT_NOT_FOUND: 'Product with ID <{id}> not found',
   },
 };
 

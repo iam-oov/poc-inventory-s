@@ -2,52 +2,47 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  ManyToOne,
   OneToMany,
-  JoinColumn,
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
 import { DB } from '../../../../utils/constants';
-import { CategoryEntity } from './category.entity';
-import { StoreEntity } from './store.entity';
-import { ProductTransferEntity } from './product-transfer.entity';
+import { MovementEntity } from './movement.entity';
+import { InventoryEntity } from './inventory.entity';
 
 @Entity({ name: DB.TABLES.PRODUCT })
 export class ProductEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'text', nullable: false })
+  @Column({ type: 'text' })
   name: string;
 
-  @Column({ type: 'int', nullable: false })
-  category_id: number;
+  @Column({ type: 'text' })
+  slug: string;
 
-  @ManyToOne(() => CategoryEntity, (category) => category.products)
-  @JoinColumn({ name: 'category_id' })
-  category: CategoryEntity;
+  @Column({ type: 'text' })
+  description: string;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: false })
+  @Column({ type: 'text', nullable: true })
+  category: string;
+
+  @Column({ type: 'decimal', precision: 10, scale: 2 })
   price: number;
 
-  @Column({ type: 'int', nullable: false })
-  stock: number;
+  @Column({ type: 'text' })
+  sku: string;
 
-  @Column({ type: 'int', nullable: false })
-  store_id: number;
+  @OneToMany(() => InventoryEntity, (inventory) => inventory.product)
+  inventories: InventoryEntity[];
+
+  @OneToMany(() => MovementEntity, (movement) => movement.product)
+  movements: MovementEntity[];
 
   @CreateDateColumn()
   createdAt: Date;
 
   @UpdateDateColumn()
   updatedAt: Date;
-
-  @ManyToOne(() => StoreEntity, (store) => store.products)
-  @JoinColumn({ name: 'store_id' })
-  store: StoreEntity;
-
-  @OneToMany(() => ProductTransferEntity, (transfer) => transfer.product)
-  transfers: ProductTransferEntity[];
 }

@@ -1,5 +1,6 @@
-
+- cambiar las entities hacia el doc
 - empezar hacer los endpoints del documento
+- preguntar a claude como hacer una transaccion: TransactionService
 - modulo health
 - swagger
 - test con postman
