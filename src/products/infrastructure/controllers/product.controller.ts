@@ -1,13 +1,15 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
-import { CommandBus } from '@nestjs/cqrs';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 
 import { ICreateProductResponse } from '../interfaces';
 import { CreateProductDto, UpdateProductDto } from '../../application/dtos';
@@ -18,7 +20,19 @@ import {
 
 @Controller('v1/products')
 export class ProductController {
-  constructor(private readonly commandBus: CommandBus) {}
+  constructor(
+    private readonly commandBus: CommandBus,
+    private readonly queryBus: QueryBus,
+  ) {}
+
+  @Get()
+  @HttpCode(HttpStatus.OK)
+  async getAllProducts(@Query() productPaginationDto: ProductPaginationDto) {
+    const products = await this.queryBus.execute(
+      new GetAllProductsCommand(productPaginationDto),
+    );
+    return { data: products };
+  }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
