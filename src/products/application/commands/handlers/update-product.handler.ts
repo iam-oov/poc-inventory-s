@@ -35,10 +35,11 @@ export class UpdateProductHandler
       );
     }
 
-    // validate if store with the same name already exists
-    const existingStore = await this.productRepository.findByName(product.name);
-    console.log('🚀 ~ execute ~ existingStore:', existingStore);
-    if (existingStore && existingStore.id !== id) {
+    // validate if product with the same name already exists
+    const existingProduct = await this.productRepository.findByName(
+      product.name,
+    );
+    if (existingProduct && existingProduct.id !== id) {
       throw new HttpException(
         {
           message: formatMessage(TEXTS.ERROR.PRODUCT_NAME_ALREADY_EXISTS, {
@@ -51,7 +52,7 @@ export class UpdateProductHandler
     }
 
     product.updateDetails(name, description, category, price, sku);
-    const updatedStore = await this.productRepository.save(product);
+    const updatedProduct = await this.productRepository.save(product);
 
     // publish event
     this.eventBus.publish(
@@ -60,6 +61,6 @@ export class UpdateProductHandler
       }),
     );
 
-    return { id: updatedStore.id };
+    return { id: updatedProduct.id };
   }
 }

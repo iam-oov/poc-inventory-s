@@ -21,9 +21,9 @@ export class CreateProductHandler
     const { name, description, category, price, sku } =
       command.createProductDto;
 
-    // validate if store with the same name already exists
-    const existingStore = await this.productRepository.findByName(name);
-    if (existingStore) {
+    // validate if product with the same name already exists
+    const existingProduct = await this.productRepository.findByName(name);
+    if (existingProduct) {
       throw new HttpException(
         {
           message: formatMessage(TEXTS.ERROR.PRODUCT_NAME_ALREADY_EXISTS, {
