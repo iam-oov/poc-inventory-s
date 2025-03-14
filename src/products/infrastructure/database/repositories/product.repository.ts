@@ -7,6 +7,7 @@ import { ProductEntity } from '../../../../shared/infrastructure/database/entiti
 import { DB } from '../../../../utils/constants';
 import { ProductModel } from '../../../domain/models';
 import { convertToSlug } from '../../../../utils/strings.util';
+import { ProductPaginationDto } from '../../../application/dtos';
 
 @Injectable()
 export class ProductRepository implements IProductRepository {
@@ -34,6 +35,40 @@ export class ProductRepository implements IProductRepository {
       return null;
     }
     return this.mapToDomain(entity);
+  }
+
+  async getAllProducts(
+    productPaginationDto: ProductPaginationDto,
+  ): Promise<{ entities: ProductModel[]; counter: number }> {
+    const { limit, page, ...filters } = productPaginationDto;
+    const { PRODUCT } = DB.TABLES;
+
+    const queryBuilder = this.productEntityRepository
+      .createQueryBuilder(PRODUCT)
+      .orderBy(`${PRODUCT}.createdAt`, 'DESC');
+
+    if (filters.category) {
+      queryBuilder.andWhere(`${PRODUCT}.category ILIKE :category`, {
+        category: `%${filters.category}%`,
+      });
+    } else if (filters.price) {
+      queryBuilder.andWhere(`${PRODUCT}.price = :price`, {
+        price: filters.price,
+      });
+    } else if (filters.sku) {
+      queryBuilder.andWhere(`${PRODUCT}.sku ILIKE :sku`, {
+        sku: `%${filters.sku}%`,
+      });
+    }
+
+    const counter = await queryBuilder.getCount();
+    queryBuilder.take(limit).skip(limit * (page - 1));
+
+    const entities = await queryBuilder.getMany();
+    return {
+      entities: entities.map((entity) => this.mapToDomain(entity)),
+      counter,
+    };
   }
 
   async save(product: ProductModel): Promise<ProductModel> {

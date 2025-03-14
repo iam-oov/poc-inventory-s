@@ -14,9 +14,10 @@ import {
   ProductCreatedHandler,
   ProductUpdatedHandler,
 } from './application/events/handlers';
+import { GetAllProductsHandler } from './application/queries/handlers';
 
 const CommandHandlers = [CreateProductHandler, UpdateProductHandler];
-const QueryHandlers = [];
+const QueryHandlers = [GetAllProductsHandler];
 const EventHandlers = [ProductCreatedHandler, ProductUpdatedHandler];
 
 @Module({

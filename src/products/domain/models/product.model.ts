@@ -49,6 +49,24 @@ export class ProductModel {
     return this._updatedAt;
   }
 
+  getDetails(): {
+    id: number;
+    name: string;
+    description: string;
+    category: string;
+    price: number;
+    sku: string;
+  } {
+    return {
+      id: this._id as number,
+      name: this._name,
+      description: this._description,
+      category: this._category,
+      price: this._price,
+      sku: this._sku,
+    };
+  }
+
   updateDetails(
     name: string,
     description: string,

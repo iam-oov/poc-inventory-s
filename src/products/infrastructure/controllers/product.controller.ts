@@ -11,12 +11,17 @@ import {
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 
-import { ICreateProductResponse } from '../interfaces';
-import { CreateProductDto, UpdateProductDto } from '../../application/dtos';
+import { ICreateProductResponse, IProductResponse } from '../interfaces';
+import {
+  CreateProductDto,
+  ProductPaginationDto,
+  UpdateProductDto,
+} from '../../application/dtos';
 import {
   CreateProductCommand,
   UpdateProductCommand,
 } from '../../application/commands/implementations';
+import { GetAllProductsQuery } from '../../application/queries/implementations';
 
 @Controller('v1/products')
 export class ProductController {
@@ -27,11 +32,22 @@ export class ProductController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  async getAllProducts(@Query() productPaginationDto: ProductPaginationDto) {
-    const products = await this.queryBus.execute(
-      new GetAllProductsCommand(productPaginationDto),
+  async getAllProducts(
+    @Query() productPaginationDto: ProductPaginationDto,
+  ): Promise<IProductResponse> {
+    const { products, counter } = await this.queryBus.execute(
+      new GetAllProductsQuery(productPaginationDto),
     );
-    return { data: products };
+
+    return {
+      data: products,
+      meta: {
+        pagination: {
+          page: productPaginationDto.page,
+          lastPage: Math.ceil(counter / productPaginationDto.limit),
+        },
+      },
+    };
   }
 
   @Post()

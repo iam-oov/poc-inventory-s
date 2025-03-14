@@ -1,12 +1,19 @@
-import { IsNumber, IsString } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 import { PaginationDto } from '../../../shared/aplication/dtos';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 
-export class OrderPaginationDto extends PaginationDto {
+export class ProductPaginationDto extends PaginationDto {
   @IsString()
-  category: string;
+  @IsOptional()
+  @Transform(({ value }) => value?.toLowerCase())
+  category?: string;
 
   @IsNumber()
+  @IsOptional()
   @Type(() => Number)
-  price: number;
+  price?: number;
+
+  @IsString()
+  @IsOptional()
+  sku?: string;
 }
