@@ -58,11 +58,11 @@ export class ProductModel {
     sku: string;
   } {
     return {
-      id: this._id as number,
+      id: +this._id,
       name: this._name,
       description: this._description,
       category: this._category,
-      price: this._price,
+      price: +this._price,
       sku: this._sku,
     };
   }

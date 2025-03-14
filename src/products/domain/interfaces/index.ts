@@ -1,1 +1,1 @@
-export * from './store-repository.interface';
+export * from './product-repository.interface';

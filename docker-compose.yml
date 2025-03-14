@@ -12,8 +12,8 @@ services:
       POSTGRES_DB: ${DB_DATABASE}
       PGDATA: /postgres-data
 
-  s-products:
-    container_name: c-s-products
+  s-inventory:
+    container_name: c-s-inventory
     build: .
     ports:
       - "${PORT}:${PORT}"

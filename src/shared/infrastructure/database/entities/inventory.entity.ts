@@ -17,19 +17,19 @@ export class InventoryEntity {
   id: number;
 
   @Column({ type: 'bigint' })
-  product_id: number;
+  productId: number;
 
   @Column({ type: 'text' })
-  store_id: string;
+  storeId: string;
 
   @Column({ type: 'int' })
   quantity: number;
 
   @Column({ type: 'int' })
-  min_stock: number;
+  minStock: number;
 
   @ManyToOne(() => ProductEntity, (product) => product.inventories)
-  @JoinColumn({ name: 'product_id' })
+  @JoinColumn({ name: 'productId' })
   product: ProductEntity;
 
   @CreateDateColumn()

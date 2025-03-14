@@ -8,4 +8,5 @@ export interface IProductRepository {
     filters: ProductPaginationDto,
   ): Promise<{ entities: ProductModel[]; counter: number }>;
   save(product: ProductModel): Promise<ProductModel>;
+  delete(product: ProductModel): Promise<{ id: number }>;
 }

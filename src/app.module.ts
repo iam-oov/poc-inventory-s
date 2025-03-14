@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { DB } from './utils/constants';
 import { envs } from './configs';
 import { ProductModule } from './products/product.module';
+import { InventoryModule } from './inventories/inventory.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { ProductModule } from './products/product.module';
       synchronize: false,
     }),
     ProductModule,
+    InventoryModule,
   ],
   controllers: [],
 })

@@ -26,7 +26,7 @@ export class UpdateProductHandler
     if (!product) {
       throw new HttpException(
         {
-          message: formatMessage(TEXTS.ERROR.PRODUCT_NOT_FOUND, {
+          message: formatMessage(TEXTS.ERROR.PRODUCT_NOT_FOUND_ID, {
             id,
           }),
           code: 'upstha32-1222',

@@ -8,21 +8,35 @@ import { ProductController } from './infrastructure/controllers';
 import { ProductRepository } from './infrastructure/database/repositories';
 import {
   CreateProductHandler,
+  DeleteProductHandler,
   UpdateProductHandler,
 } from './application/commands/handlers';
 import {
   ProductCreatedHandler,
+  ProductDeletedHandler,
   ProductUpdatedHandler,
 } from './application/events/handlers';
-import { GetAllProductsHandler } from './application/queries/handlers';
+import {
+  GetAllProductsHandler,
+  GetProductByHandler,
+} from './application/queries/handlers';
 
-const CommandHandlers = [CreateProductHandler, UpdateProductHandler];
-const QueryHandlers = [GetAllProductsHandler];
-const EventHandlers = [ProductCreatedHandler, ProductUpdatedHandler];
+const CommandHandlers = [
+  CreateProductHandler,
+  UpdateProductHandler,
+  DeleteProductHandler,
+];
+const QueryHandlers = [GetAllProductsHandler, GetProductByHandler];
+const EventHandlers = [
+  ProductCreatedHandler,
+  ProductUpdatedHandler,
+  ProductDeletedHandler,
+];
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([ProductEntity], DB.WRITE_CONNECTION),
+    TypeOrmModule.forFeature([ProductEntity], DB.READ_CONNECTION),
     CqrsModule,
   ],
   controllers: [ProductController],

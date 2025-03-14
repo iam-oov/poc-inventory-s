@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -11,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 
-import { ICreateProductResponse, IProductResponse } from '../interfaces';
+import { IProductIdResponse, IProductResponse } from '../interfaces';
 import {
   CreateProductDto,
   ProductPaginationDto,
@@ -19,9 +20,13 @@ import {
 } from '../../application/dtos';
 import {
   CreateProductCommand,
+  DeleteProductCommand,
   UpdateProductCommand,
 } from '../../application/commands/implementations';
-import { GetAllProductsQuery } from '../../application/queries/implementations';
+import {
+  GetAllProductsQuery,
+  GetProductByQuery,
+} from '../../application/queries/implementations';
 
 @Controller('v1/products')
 export class ProductController {
@@ -50,11 +55,18 @@ export class ProductController {
     };
   }
 
+  @Get(':id')
+  @HttpCode(HttpStatus.OK)
+  async getProductById(@Param('id') id: number): Promise<IProductResponse> {
+    const product = await this.queryBus.execute(new GetProductByQuery({ id }));
+    return { data: product };
+  }
+
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async createProduct(
     @Body() createProductDto: CreateProductDto,
-  ): Promise<ICreateProductResponse> {
+  ): Promise<IProductIdResponse> {
     const newProduct = await this.commandBus.execute(
       new CreateProductCommand(createProductDto),
     );
@@ -65,10 +77,17 @@ export class ProductController {
   async updateProduct(
     @Param('id') id: number,
     @Body() updateProductDto: UpdateProductDto,
-  ): Promise<ICreateProductResponse> {
+  ): Promise<IProductIdResponse> {
     const updatedProduct = await this.commandBus.execute(
       new UpdateProductCommand(id, updateProductDto),
     );
     return { data: { id: updatedProduct.id } };
+  }
+
+  @Delete(':id')
+  @HttpCode(HttpStatus.OK)
+  async deleteProduct(@Param('id') id: number): Promise<IProductIdResponse> {
+    await this.commandBus.execute(new DeleteProductCommand(id));
+    return { data: { id } };
   }
 }

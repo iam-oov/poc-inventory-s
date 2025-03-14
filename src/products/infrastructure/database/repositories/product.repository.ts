@@ -13,11 +13,14 @@ import { ProductPaginationDto } from '../../../application/dtos';
 export class ProductRepository implements IProductRepository {
   constructor(
     @InjectRepository(ProductEntity, DB.WRITE_CONNECTION)
-    private readonly productEntityRepository: Repository<ProductEntity>,
+    private readonly productEntityWriteRepository: Repository<ProductEntity>,
+
+    @InjectRepository(ProductEntity, DB.READ_CONNECTION)
+    private readonly productEntityReadRepository: Repository<ProductEntity>,
   ) {}
 
   async findById(id: number): Promise<ProductModel | null> {
-    const entity = await this.productEntityRepository.findOne({
+    const entity = await this.productEntityReadRepository.findOne({
       where: { id },
     });
     if (!entity) {
@@ -28,7 +31,7 @@ export class ProductRepository implements IProductRepository {
 
   async findByName(name: string): Promise<ProductModel | null> {
     const slug = convertToSlug(name);
-    const entity = await this.productEntityRepository.findOne({
+    const entity = await this.productEntityReadRepository.findOne({
       where: { slug },
     });
     if (!entity) {
@@ -43,7 +46,7 @@ export class ProductRepository implements IProductRepository {
     const { limit, page, ...filters } = productPaginationDto;
     const { PRODUCT } = DB.TABLES;
 
-    const queryBuilder = this.productEntityRepository
+    const queryBuilder = this.productEntityReadRepository
       .createQueryBuilder(PRODUCT)
       .orderBy(`${PRODUCT}.createdAt`, 'DESC');
 
@@ -73,8 +76,14 @@ export class ProductRepository implements IProductRepository {
 
   async save(product: ProductModel): Promise<ProductModel> {
     const entity = this.mapToEntity(product);
-    const newEntity = await this.productEntityRepository.save(entity);
+    const newEntity = await this.productEntityWriteRepository.save(entity);
     return this.mapToDomain(newEntity);
+  }
+
+  async delete(product: ProductModel): Promise<{ id: number }> {
+    const entity = this.mapToEntity(product);
+    await this.productEntityWriteRepository.remove(entity);
+    return { id: product.id };
   }
 
   private mapToDomain(entity: ProductEntity): ProductModel {

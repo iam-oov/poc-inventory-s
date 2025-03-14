@@ -1,5 +1,5 @@
 import { IBaseResponse } from './base-reponse.interface';
 
-export interface ICreateProductResponse extends IBaseResponse {
+export interface IProductIdResponse extends IBaseResponse {
   data: { id: number };
 }
