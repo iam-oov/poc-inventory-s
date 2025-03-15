@@ -9,9 +9,8 @@ async function bootstrap() {
   const logger = new Logger(`Main-${appConfig.APP_NAME}`);
 
   const app = await NestFactory.create(AppModule);
-  const prefix = appConfig.NAMESPACE;
 
-  app.setGlobalPrefix(`${prefix}/api`, {
+  app.setGlobalPrefix(`api`, {
     exclude: [
       {
         path: '',

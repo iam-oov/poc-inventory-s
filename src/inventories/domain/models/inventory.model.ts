@@ -44,6 +44,14 @@ export class InventoryModel {
     return this._product;
   }
 
+  addQuantity(quantity: number): void {
+    this._quantity += quantity;
+  }
+
+  removeQuantity(quantity: number): void {
+    this._quantity -= quantity;
+  }
+
   getDetails(): {
     id: number;
     product: IProduct;

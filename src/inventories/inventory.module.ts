@@ -7,13 +7,21 @@ import {
   MovementEntity,
 } from '../shared/infrastructure/database/entities';
 import { DB } from '../utils/constants';
-import { StoreController } from './infraestructure/controllers';
-import { InventoryRepository } from './infraestructure/database/repositories';
+import {
+  InventoryController,
+  StoreController,
+} from './infraestructure/controllers';
+import {
+  InventoryRepository,
+  MovementRepository,
+} from './infraestructure/database/repositories';
 import { GetInventoryByHandler } from './application/queries/handlers';
+import { TransferInventoryHandler } from './application/commands/handlers';
+import { MovementCreatedHandler } from './application/events/handlers';
 
-const CommandHandlers = [];
+const CommandHandlers = [TransferInventoryHandler];
 const QueryHandlers = [GetInventoryByHandler];
-const EventHandlers = [];
+const EventHandlers = [MovementCreatedHandler];
 
 @Module({
   imports: [
@@ -24,11 +32,15 @@ const EventHandlers = [];
     TypeOrmModule.forFeature([InventoryEntity], DB.READ_CONNECTION),
     CqrsModule,
   ],
-  controllers: [StoreController],
+  controllers: [StoreController, InventoryController],
   providers: [
     {
       provide: 'IInventoryRepository',
       useClass: InventoryRepository,
+    },
+    {
+      provide: 'IMovementRepository',
+      useClass: MovementRepository,
     },
     // handlers
     ...CommandHandlers,

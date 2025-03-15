@@ -18,13 +18,13 @@ export class MovementEntity {
   id: number;
 
   @Column({ type: 'bigint' })
-  product_id: number;
+  productId: number;
 
   @Column({ type: 'text' })
-  source_store_id: string;
+  sourceStoreId: string;
 
   @Column({ type: 'text' })
-  to_store_id: string;
+  toStoreId: string;
 
   @Column({ type: 'int' })
   quantity: number;
@@ -36,7 +36,7 @@ export class MovementEntity {
   type: MovementType;
 
   @ManyToOne(() => ProductEntity, (product) => product.movements)
-  @JoinColumn({ name: 'product_id' })
+  @JoinColumn({ name: 'productId' })
   product: ProductEntity;
 
   @CreateDateColumn()
