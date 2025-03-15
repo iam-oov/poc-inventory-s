@@ -1,6 +1,8 @@
+import { IProduct } from '../../../products/application/interfaces';
+
 export interface IInventory {
   id: number;
-  productId: number;
+  product: IProduct;
   storeId: string;
   quantity: number;
 }

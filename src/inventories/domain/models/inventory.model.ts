@@ -1,3 +1,5 @@
+import { IProduct } from '../../../products/application/interfaces';
+
 export class InventoryModel {
   constructor(
     private _productId: number,
@@ -7,6 +9,7 @@ export class InventoryModel {
     private readonly _createdAt: Date,
     private _updatedAt: Date,
     private readonly _id?: number,
+    private readonly _product?: IProduct,
   ) {}
 
   get id(): number | undefined {
@@ -37,16 +40,27 @@ export class InventoryModel {
     return this._updatedAt;
   }
 
+  get product(): IProduct | undefined {
+    return this._product;
+  }
+
   getDetails(): {
     id: number;
-    productId: number;
+    product: IProduct;
     storeId: string;
     quantity: number;
     minStock: number;
   } {
     return {
       id: +this._id,
-      productId: +this._productId,
+      product: {
+        id: this.product.id,
+        name: this.product.name,
+        description: this.product.description,
+        category: this.product.category,
+        price: this.product.price,
+        sku: this.product.sku,
+      },
       storeId: this._storeId,
       quantity: +this._quantity,
       minStock: +this._minStock,

@@ -17,7 +17,9 @@ export class InventoryRepository implements IInventoryRepository {
   async findByStoreId(storeId: string): Promise<InventoryModel[] | null> {
     const entities = await this.productEntityReadRepository.find({
       where: { storeId },
+      relations: ['product'],
     });
+
     if (!entities) {
       return null;
     }
@@ -33,6 +35,7 @@ export class InventoryRepository implements IInventoryRepository {
       entity.createdAt,
       entity.updatedAt,
       entity.id,
+      entity.product,
     );
   }
 }
