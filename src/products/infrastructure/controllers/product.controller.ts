@@ -11,6 +11,13 @@ import {
   Query,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import {
+  ApiBadRequestResponse,
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 
 import { IProductIdResponse, IProductResponse } from '../interfaces';
 import {
@@ -27,7 +34,9 @@ import {
   GetAllProductsQuery,
   GetProductByQuery,
 } from '../../application/queries/implementations';
+import { TEXTS } from '../../../utils/constants';
 
+@ApiTags('Products - V1')
 @Controller('v1/products')
 export class ProductController {
   constructor(
@@ -37,6 +46,25 @@ export class ProductController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: TEXTS.API.GET_ALL_PRODUCTS.SUMMARY,
+    description: TEXTS.API.GET_ALL_PRODUCTS.DESCRIPTION,
+  })
+  @ApiOkResponse({
+    description: TEXTS.API.GET_ALL_PRODUCTS.SUCCESS,
+    schema: {
+      type: 'object',
+      properties: {
+        data: {
+          type: 'object',
+          description: TEXTS.API.GET_ALL_PRODUCTS.DATA_DESCRIPTION,
+        },
+      },
+    },
+  })
+  @ApiBadRequestResponse({
+    description: TEXTS.API.GET_ALL_PRODUCTS.DTO_VALIDATION_ERROR,
+  })
   async getAllProducts(
     @Query() productPaginationDto: ProductPaginationDto,
   ): Promise<IProductResponse> {
@@ -55,15 +83,28 @@ export class ProductController {
     };
   }
 
-  @Get(':id')
-  @HttpCode(HttpStatus.OK)
-  async getProductById(@Param('id') id: number): Promise<IProductResponse> {
-    const product = await this.queryBus.execute(new GetProductByQuery({ id }));
-    return { data: product };
-  }
-
   @Post()
   @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({
+    summary: TEXTS.API.CREATE_PRODUCT.SUMMARY,
+    description: TEXTS.API.CREATE_PRODUCT.DESCRIPTION,
+  })
+  @ApiCreatedResponse({
+    description: TEXTS.API.CREATE_PRODUCT.SUCCESS,
+    schema: {
+      type: 'object',
+      properties: {
+        data: {
+          type: 'object',
+          description: TEXTS.API.CREATE_PRODUCT.DATA_DESCRIPTION,
+          example: { id: 1 },
+        },
+      },
+    },
+  })
+  @ApiBadRequestResponse({
+    description: TEXTS.API.CREATE_PRODUCT.DTO_VALIDATION_ERROR,
+  })
   async createProduct(
     @Body() createProductDto: CreateProductDto,
   ): Promise<IProductIdResponse> {
@@ -71,6 +112,13 @@ export class ProductController {
       new CreateProductCommand(createProductDto),
     );
     return { data: { id: newProduct.id } };
+  }
+
+  @Get(':id')
+  @HttpCode(HttpStatus.OK)
+  async getProductById(@Param('id') id: number): Promise<IProductResponse> {
+    const product = await this.queryBus.execute(new GetProductByQuery({ id }));
+    return { data: product };
   }
 
   @Patch(':id')

@@ -1,4 +1,21 @@
 const TEXTS = {
+  API: {
+    GET_ALL_PRODUCTS: {
+      SUMMARY: 'Retrieve all products',
+      DESCRIPTION:
+        'Fetches all products from the system with optional pagination.',
+      DATA_DESCRIPTION: 'The list of products retrieved.',
+      SUCCESS: 'Returns all products',
+      DTO_VALIDATION_ERROR: 'DTO validation error',
+    },
+    CREATE_PRODUCT: {
+      SUMMARY: 'Create a product',
+      DESCRIPTION: 'Creates a new product in the system.',
+      SUCCESS: 'Returns the productId created',
+      DATA_DESCRIPTION: 'The product created.',
+      DTO_VALIDATION_ERROR: 'DTO validation error',
+    },
+  },
   ERROR: {
     PRODUCT_NAME_ALREADY_EXISTS: 'Product with name <{name}> already exists',
     PRODUCT_NOT_FOUND_ID: 'Product with ID <{id}> not found',
