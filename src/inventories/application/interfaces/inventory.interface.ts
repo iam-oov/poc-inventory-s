@@ -5,4 +5,5 @@ export interface IInventory {
   product: IProduct;
   storeId: string;
   quantity: number;
+  minStock: number;
 }

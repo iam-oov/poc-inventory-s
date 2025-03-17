@@ -1,4 +1,4 @@
-import { Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -35,6 +35,7 @@ export class InventoryRepository implements IInventoryRepository {
   ): Promise<InventoryModel | null> {
     const entity = await this.inventoryEntityReadRepository.findOne({
       where: { storeId, productId },
+      relations: ['product'],
     });
 
     if (!entity) {
@@ -44,9 +45,35 @@ export class InventoryRepository implements IInventoryRepository {
     return this.mapToDomain(entity);
   }
 
-  async save(inventory: InventoryModel): Promise<InventoryModel> {
+  async findLowStockInventories(): Promise<InventoryModel[] | null> {
+    const { INVENTORY } = DB.TABLES;
+    const entities = await this.inventoryEntityReadRepository
+      .createQueryBuilder(INVENTORY)
+      .where(`${INVENTORY}.quantity <= ${INVENTORY}.minStock`)
+      .leftJoinAndSelect(`${INVENTORY}.product`, 'product')
+      .orderBy(`${INVENTORY}.minStock - ${INVENTORY}.quantity`, 'DESC')
+      .getMany();
+
+    if (!entities) {
+      return null;
+    }
+
+    return entities.map((entity) => this.mapToDomain(entity));
+  }
+
+  async save(
+    inventory: InventoryModel,
+    transactionManager?: EntityManager,
+  ): Promise<InventoryModel> {
     const entity = this.mapToEntity(inventory);
-    const newEntity = await this.inventoryEntityWriteRepository.save(entity);
+
+    let newEntity;
+    if (transactionManager) {
+      newEntity = await transactionManager.save(entity);
+    } else {
+      newEntity = await this.inventoryEntityWriteRepository.save(entity);
+    }
+
     return this.mapToDomain(newEntity);
   }
 

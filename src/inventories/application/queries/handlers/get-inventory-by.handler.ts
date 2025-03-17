@@ -18,9 +18,7 @@ export class GetInventoryByHandler
 
   async execute(query: GetInventoryByQuery): Promise<IInventory[]> {
     const { storeId } = query.myQuery;
-
     const inventories = await this.findInventoriesByStoreId(storeId);
-
     return inventories.map((inventory) => inventory.getDetails());
   }
 

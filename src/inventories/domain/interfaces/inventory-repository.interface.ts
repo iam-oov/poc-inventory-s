@@ -1,3 +1,5 @@
+import { EntityManager } from 'typeorm';
+
 import { InventoryModel } from '../models';
 
 export interface IInventoryRepository {
@@ -6,5 +8,9 @@ export interface IInventoryRepository {
     storeId: string,
     productId: number,
   ): Promise<InventoryModel | null>;
-  save(inventory: InventoryModel): Promise<InventoryModel>;
+  findLowStockInventories(): Promise<InventoryModel[] | null>;
+  save(
+    inventory: InventoryModel,
+    transactionManager?: EntityManager,
+  ): Promise<InventoryModel>;
 }

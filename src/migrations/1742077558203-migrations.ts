@@ -1,11 +1,11 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class Migrations1742064967585 implements MigrationInterface {
-    name = 'Migrations1742064967585'
+export class Migrations1742077558203 implements MigrationInterface {
+    name = 'Migrations1742077558203'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`CREATE TYPE "public"."movement_type_enum" AS ENUM('in', 'out', 'transfer')`);
-        await queryRunner.query(`CREATE TABLE "movement" ("id" SERIAL NOT NULL, "productId" integer NOT NULL, "sourceStoreId" text NOT NULL, "toStoreId" text NOT NULL, "quantity" integer NOT NULL, "type" "public"."movement_type_enum" NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_079f005d01ebda984e75c2d67ee" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "movement" ("id" SERIAL NOT NULL, "productId" integer NOT NULL, "sourceStoreId" text NOT NULL, "toStoreId" text, "quantity" integer NOT NULL, "type" "public"."movement_type_enum" NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_079f005d01ebda984e75c2d67ee" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "inventory" ("id" SERIAL NOT NULL, "productId" integer NOT NULL, "storeId" text NOT NULL, "quantity" integer NOT NULL, "minStock" integer NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_82aa5da437c5bbfb80703b08309" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "product" ("id" SERIAL NOT NULL, "name" text NOT NULL, "slug" text NOT NULL, "description" text NOT NULL, "category" text, "price" numeric(10,2) NOT NULL, "sku" text NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_bebc9158e480b949565b4dc7a82" PRIMARY KEY ("id"))`);
         await queryRunner.query(`ALTER TABLE "movement" ADD CONSTRAINT "FK_e2f7dc9076f2b72c075c97154ce" FOREIGN KEY ("productId") REFERENCES "product"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);

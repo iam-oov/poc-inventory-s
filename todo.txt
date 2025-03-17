@@ -1,7 +1,11 @@
-- cambiar las entities hacia el doc
-- empezar hacer los endpoints del documento
-- preguntar a claude como hacer una transaccion: TransactionService
 - modulo health
 - swagger
 - test con postman
+- readme
+- seed
 - empezar el curso de test de devtalles
+- quitar los mensajes hardcode de transfer-inventory.handler.ts
+- [-] al momento de regresar los productos como un objeto anidado quitar su description para regresar response mas ligeros
+      - EJEMPLO:
+        - {{DOMAIN}}/api/v1/inventories/alerts
+- [+] enviar email si hay bajo stock

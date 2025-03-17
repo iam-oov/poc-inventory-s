@@ -1,4 +1,4 @@
-import { Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -16,6 +16,7 @@ export class MovementRepository implements IMovementRepository {
 
   async save(movement: MovementModel): Promise<MovementModel> {
     const entity = this.mapToEntity(movement);
+
     const newEntity = await this.movementEntityWriteRepository.save(entity);
     return this.mapToDomain(newEntity);
   }

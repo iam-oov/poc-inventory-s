@@ -28,7 +28,7 @@ export class CustomExceptionFilter implements ExceptionFilter {
 
   private getErrorMessage(
     exceptionResponse: any,
-    exception: HttpException
+    exception: HttpException,
   ): string {
     return typeof exceptionResponse === 'object' && exceptionResponse.message
       ? exceptionResponse.message
@@ -41,23 +41,29 @@ export class CustomExceptionFilter implements ExceptionFilter {
       : '';
   }
 
+  private getErrorSys(exceptionResponse: any): string {
+    return typeof exceptionResponse === 'object' && exceptionResponse.sys
+      ? exceptionResponse.sys
+      : '';
+  }
+
   private handleHttpException(
     exception: HttpException,
     response: Response,
-    request: Request
+    request: Request,
   ): void {
     const status = exception.getStatus();
     const exceptionResponse = exception.getResponse();
 
     const errorMessage = this.getErrorMessage(exceptionResponse, exception);
     const errorCode = this.getErrorCode(exceptionResponse);
+    const errorSys = this.getErrorSys(exceptionResponse);
 
     const errorResponse = this.buildErrorResponse(
       status,
-      errorMessage,
-      errorCode,
+      { errorMessage, errorCode, errorSys },
       request,
-      exception
+      exception,
     );
 
     response.status(status).json(errorResponse);
@@ -66,14 +72,18 @@ export class CustomExceptionFilter implements ExceptionFilter {
   private handleGenericException(
     exception: unknown,
     response: Response,
-    request: Request
+    request: Request,
   ): void {
     const errorResponse = this.buildErrorResponse(
       HttpStatus.INTERNAL_SERVER_ERROR,
-      'Internal server error. Check the logs for more information.',
-      '',
+      {
+        errorMessage:
+          'Internal server error. Check the logs for more information.',
+        errorCode: 'INTERNAL_SERVER_ERROR',
+        errorSys: '',
+      },
       request,
-      exception
+      exception,
     );
 
     response.status(HttpStatus.INTERNAL_SERVER_ERROR).json(errorResponse);
@@ -82,14 +92,17 @@ export class CustomExceptionFilter implements ExceptionFilter {
   private handleDBException(
     exception: QueryFailedError,
     response: Response,
-    request: Request
+    request: Request,
   ): void {
     const errorResponse = this.buildErrorResponse(
       HttpStatus.INTERNAL_SERVER_ERROR,
-      'Internal server error. Check the logs for more information.',
-      'DB_ERROR',
+      {
+        errorMessage: 'Database error',
+        errorCode: 'DB_ERROR',
+        errorSys: '',
+      },
       request,
-      exception
+      exception,
     );
 
     response.status(HttpStatus.INTERNAL_SERVER_ERROR).json(errorResponse);
@@ -97,15 +110,19 @@ export class CustomExceptionFilter implements ExceptionFilter {
 
   private buildErrorResponse(
     statusCode: number,
-    message: string,
-    code: string,
+    customKeysError: {
+      errorMessage: string;
+      errorCode: string;
+      errorSys: string;
+    },
     request: Request,
-    exception: unknown
+    exception: unknown,
   ): Record<string, any> {
     const errorResponse: Record<string, any> = {
       statusCode,
-      message,
-      code: code.toUpperCase(),
+      message: customKeysError.errorMessage,
+      code: customKeysError.errorCode.toUpperCase(),
+      sys: customKeysError.errorSys,
     };
 
     if (envs.isDev) {

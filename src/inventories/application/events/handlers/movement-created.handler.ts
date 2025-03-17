@@ -30,6 +30,7 @@ export class MovementCreatedHandler
       now,
     );
 
-    await this.movementRepository.save(movement);
+    const entity = await this.movementRepository.save(movement);
+    this.logger.log(`Movement ID: <${entity.id}> created`);
   }
 }

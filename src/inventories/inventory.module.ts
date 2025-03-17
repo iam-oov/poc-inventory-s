@@ -15,13 +15,19 @@ import {
   InventoryRepository,
   MovementRepository,
 } from './infraestructure/database/repositories';
-import { GetInventoryByHandler } from './application/queries/handlers';
+import {
+  GetInventoryByHandler,
+  GetInventoryLowStockHandler,
+} from './application/queries/handlers';
 import { TransferInventoryHandler } from './application/commands/handlers';
-import { MovementCreatedHandler } from './application/events/handlers';
+import {
+  LowStockActivatedHandler,
+  MovementCreatedHandler,
+} from './application/events/handlers';
 
 const CommandHandlers = [TransferInventoryHandler];
-const QueryHandlers = [GetInventoryByHandler];
-const EventHandlers = [MovementCreatedHandler];
+const QueryHandlers = [GetInventoryByHandler, GetInventoryLowStockHandler];
+const EventHandlers = [MovementCreatedHandler, LowStockActivatedHandler];
 
 @Module({
   imports: [

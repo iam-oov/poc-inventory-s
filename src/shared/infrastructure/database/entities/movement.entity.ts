@@ -23,7 +23,7 @@ export class MovementEntity {
   @Column({ type: 'text' })
   sourceStoreId: string;
 
-  @Column({ type: 'text' })
+  @Column({ type: 'text', nullable: true })
   toStoreId: string;
 
   @Column({ type: 'int' })
