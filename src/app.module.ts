@@ -6,6 +6,7 @@ import { DB } from './utils/constants';
 import { envs } from './configs';
 import { ProductModule } from './products/product.module';
 import { InventoryModule } from './inventories/inventory.module';
+import { HealthCheckModule } from './shared/health-check/health-check.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { InventoryModule } from './inventories/inventory.module';
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: false,
     }),
+    HealthCheckModule,
     ProductModule,
     InventoryModule,
   ],

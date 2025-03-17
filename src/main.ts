@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { Logger, RequestMethod, ValidationPipe } from '@nestjs/common';
 
 import { AppModule } from './app.module';
-import { appConfig, envs } from './configs';
+import { appConfig, envs, swaggerConfig } from './configs';
 import { CustomExceptionFilter } from './shared/exceptions/error-custom-exception.filter';
 
 async function bootstrap() {
@@ -12,10 +12,6 @@ async function bootstrap() {
 
   app.setGlobalPrefix(`api`, {
     exclude: [
-      {
-        path: '',
-        method: RequestMethod.GET,
-      },
       {
         path: '/health',
         method: RequestMethod.GET,
@@ -34,6 +30,9 @@ async function bootstrap() {
       },
     }),
   );
+
+  // swagger config
+  swaggerConfig(app, `api`);
 
   app.useGlobalFilters(new CustomExceptionFilter());
 
