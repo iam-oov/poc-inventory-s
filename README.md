@@ -77,25 +77,13 @@ npm run m:revert     # Revierte la última migración aplicada
 
 Asegúrate de ejecutar estos comandos según sea necesario para mantener la base de datos en sincronía con las entidades del proyecto.
 
-## Endpoints principales
+## Documentación completa
 
-- GET /api/products
-- - Listar todos los productos
-- - Filtros por: categoría, precio, stock
-- - Paginación
-- GET /api/products/{id}
-- - Obtener detalle de un producto
-- POST /api/products
-- - Crear nuevo producto
-- - Validación de datos obligatorios
-- PUT /api/products/{id}
-- - Actualizar producto existente
-- DELETE /api/products/{id}
-- - Eliminar producto
-- GET /api/stores/{id}/inventory
-- - Listar inventario por tienda
-- POST /api/inventory/transfer
-- - Transferir productos entre tiendas
-- - Validación de stock disponible
-- GET /api/inventory/alerts
-- - Listar productos con stock bajo
+La documentación completa de la API está disponible en:
+
+```bash
+http://localhost:3001/api
+```
+
+> [!NOTE]
+> Se ha priorizado la implementación y documentación detallada solo en los primeros dos endpoints de productos. El resto de endpoints siguen la misma estructura y convenciones por default, y pueden ser consultados en la documentación interactiva.
