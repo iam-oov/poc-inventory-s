@@ -114,6 +114,8 @@ Utilicé `Postman Collection Runner` para automatizar un flujo de pruebas comple
 3. **Modificar el producto:** Guardo un nuevo nombre para el producto y hago un PATCH para actualizarlo.
 4. **Verificar la actualización:** Vuelvo a consultar el producto y confirmo que el nombre se ha actualizado correctamente.
 
+![postman_test_integration](./public/images/postman_test_integration.png)
+
 ### Test de carga: JMeter y Postman
 
 Configuración
@@ -128,8 +130,4 @@ Herramientas:
 - **Postman:** Para validar respuestas y tiempos
 
 ![postman_test_carga](./public/images/postman_test_carga.png)
-![jmeter_test_carga](./public/images/jmeter_test_carga.png)
-
-### Interpretacion de resultados
-
-...
+![jmeter_test_carga](./public/images/jmeter_test_carga2.png)
