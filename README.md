@@ -21,7 +21,7 @@ El sistema ha sido diseñado siguiendo principios de arquitectura hexagonal comb
 
 ![db_diagram](./public/images/db-diagram.png)
 
-#### Decisiones de diseño
+### Decisiones de diseño
 
 En esta solución, intencionalmente no se ha establecido una relación de clave foránea (FK) con la tabla "Stores". De hecho, esta tabla **no existe** en el diagrama por una razón específica:
 
