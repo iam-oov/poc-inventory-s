@@ -98,6 +98,7 @@ En esta sección describo las pruebas que he realizado para verificar el funcion
 
 He utilizado Postman para probar todo el ciclo de vida de los productos y validar que la API funciona correctamente.
 
+> [!IMPORTANT]
 > La colección de Postman está disponible en la carpeta `public` del repositorio para que puedas replicar estas pruebas fácilmente.
 
 ### Enfoque de pruebas
