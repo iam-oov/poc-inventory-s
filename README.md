@@ -35,9 +35,9 @@ En esta solución, intencionalmente no se ha establecido una relación de clave 
 
 ## Tecnologías utilizadas
 
-- Framework: NestJS
-- Base de datos: Postgresl con TypeORM
-- Documentación API: Swagger
+- **Framework:** NestJS
+- **Base de datos:** Postgresl con TypeORM
+- **Documentación API:** Swagger
 
 ## Development pasos
 
