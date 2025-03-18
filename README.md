@@ -48,7 +48,7 @@ cd technical-test-inventory
 
 # Configuración del entorno
 cp .env.example .env
-# Editar archivo .env con las credenciales necesarias
+# Editar archivo .env.prod con las credenciales necesarias y quitando las secciones que no son necesarias
 
 # Ejecución del proyecto
 docker compose up --build -d
@@ -141,9 +141,9 @@ git clone git@github.com:iam-oov/technical-test-inventory.git
 cd technical-test-inventory
 
 # Configuración del entorno
-cp .env.example .env
-# Editar archivo .env con las credenciales necesarias
+cp .env.example .env.prod
+# Editar archivo .env.prod con las credenciales necesarias y quitando las secciones que no son necesarias
 
 # Construcción de la imagen
-docker compose -f docker-compose.prod.yml build
+docker compose -f docker-compose.prod.yml --env-file .env.prod build
 ```

@@ -22,6 +22,7 @@
     "typeorm": "npx typeorm-ts-node-commonjs -d ./src/data-source.ts",
     "typeorm:prod": "NODE_ENV=production npx typeorm-ts-node-commonjs -d ./src/data-source.ts",
     "m:generate": "npm run typeorm migration:generate src/migrations/migrations",
+    "m:generate:prod": "npm run typeorm:prod migration:generate src/migrations/migrations",
     "m:run": "npm run typeorm migration:run",
     "m:run:prod": "npm run typeorm:prod migration:run",
     "m:run:fake": "npm run typeorm migration:run --fake",

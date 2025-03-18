@@ -3,12 +3,10 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { DB } from './utils/constants';
-import { envs, PRODUCTION } from './configs';
 import { ProductModule } from './products/product.module';
 import { InventoryModule } from './inventories/inventory.module';
 import { HealthCheckModule } from './shared/health-check/health-check.module';
-
-console.log('envs', envs.db);
+import { envs, PRODUCTION } from './configs/envs.config';
 
 @Module({
   imports: [

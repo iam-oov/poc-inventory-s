@@ -4,8 +4,13 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.prod
-    env_file:
-      - .env.prod
+      args:
+        - PORT=${PORT}
+        - DB_DIALECT=${DB_DIALECT}
+        - DB_URL=${DB_URL}
+    ports:
+      - ${PORT}:${PORT}
     environment:
+      - PORT=${PORT}
       - DB_DIALECT=${DB_DIALECT}
       - DB_URL=${DB_URL}

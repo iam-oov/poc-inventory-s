@@ -11,6 +11,15 @@ RUN npm i
 # builder
 FROM node:21-alpine3.19 AS build
 
+ARG DB_DIALECT
+ENV DB_DIALECT=$DB_DIALECT
+
+ARG PORT
+ENV PORT=$PORT
+
+ARG DB_URL
+ENV DB_URL=$DB_URL
+
 WORKDIR /usr/src/app
 
 COPY --from=deps /usr/src/app/node_modules ./node_modules
@@ -18,7 +27,9 @@ COPY . .
 
 RUN npm run build
 RUN npm ci -f --only=production && npm cache clean --force
-RUN npm run m:run:prod
+
+# RUN npm run m:generate:prod
+# RUN npm run m:run:prod
 
 # runner
 FROM node:21-alpine3.19 AS prod

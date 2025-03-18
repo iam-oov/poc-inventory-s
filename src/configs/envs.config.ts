@@ -1,40 +1,11 @@
-import * as dotenv from 'dotenv';
+import 'dotenv/config';
 import * as joi from 'joi';
-import * as fs from 'fs';
-import * as path from 'path';
 import { BaseDataSourceOptions } from 'typeorm/data-source/BaseDataSourceOptions';
 
 export const DEVELOPMENT = 'development';
 export const PRODUCTION = 'production';
 
 const { NODE_ENV = DEVELOPMENT } = process.env;
-console.log('🚀 ~ NODE_ENV:', NODE_ENV);
-
-// Determinar la ruta del archivo .env
-const envPath = NODE_ENV === DEVELOPMENT ? '.env' : '.env.prod';
-console.log('🚀 ~ Ruta del archivo .env:', path.resolve(envPath));
-
-// Verificar si el archivo existe
-try {
-  const fileExists = fs.existsSync(path.resolve(envPath));
-  console.log('🚀 ~ ¿El archivo existe?:', fileExists);
-
-  if (fileExists) {
-    // Leer el contenido del archivo
-    const fileContent = fs.readFileSync(path.resolve(envPath), 'utf8');
-    console.log('🚀 ~ Contenido del archivo .env:');
-    console.log(fileContent);
-  }
-} catch (error) {
-  console.error('🚀 ~ Error al verificar/leer el archivo:', error);
-}
-
-// load environment file
-const result = dotenv.config({
-  path: envPath,
-});
-
-console.log('🚀 ~ Resultado de dotenv.config():', result);
 
 interface IEnvVars {
   DB_DATABASE: string;
@@ -103,9 +74,6 @@ const envVarsSchema = joi
   })
   .unknown(true);
 
-// Mostrar las variables de entorno antes de la validación
-console.log('🚀 ~ Variables de entorno disponibles:', process.env);
-
 // validate environment variables
 const { error, value } = envVarsSchema.validate({
   ...process.env,
@@ -113,9 +81,8 @@ const { error, value } = envVarsSchema.validate({
 });
 
 if (error) {
-  console.error('🚀 ~ Error de validación:', error.message);
   throw new Error(
-    `[ENV: ${NODE_ENV}] Config validation error: ${error.message}`,
+    `[ENV: ${NODE_ENV}] Config validation error: ${error.message},`,
   );
 }
 
@@ -135,5 +102,3 @@ export const envs = {
     url: envVars.DB_URL,
   },
 };
-
-console.log('🚀 ~ envs:', envs);
