@@ -87,3 +87,49 @@ http://localhost:3001/api
 
 > [!NOTE]
 > Se ha priorizado la implementación y documentación detallada solo en los dos primeros endpoints de productos. El resto de endpoints siguen la misma estructura y convenciones por default, y pueden ser consultados en la documentación interactiva.
+
+![swagger](./public/images/swagger.png)
+
+## Testing
+
+En esta sección describo las pruebas que he realizado para verificar el funcionamiento y rendimiento de la API.
+
+### Test de integración
+
+He utilizado Postman para probar todo el ciclo de vida de los productos y validar que la API funciona correctamente.
+
+> La colección de Postman está disponible en la carpeta `public` del repositorio para que puedas replicar estas pruebas fácilmente.
+
+### Enfoque de pruebas
+
+Utilicé `Postman Collection Runner` para automatizar un flujo de pruebas completo en cuatro pasos:
+
+1. **Crear un producto nuevo:** Hago un POST con datos aleatorios y guardo el ID que me devuelve la API.
+2. **Verificar que se guardó correctamente:** Consulto el producto creado con GET /api/v1/products/:id y compruebo que:
+
+- No hay errores (no recibo código 409)
+- La estructura de los datos es correcta
+- Los valores coinciden con los que envié
+
+3. **Modificar el producto:** Guardo un nuevo nombre para el producto y hago un PATCH para actualizarlo.
+4. **Verificar la actualización:** Vuelvo a consultar el producto y confirmo que el nombre se ha actualizado correctamente.
+
+### Test de carga: JMeter y Postman
+
+Configuración
+Endpoints analizados: Elegí dos puntos críticos de la API:
+
+- Creación de productos (POST)
+- Listado de órdenes (GET)
+
+Herramientas:
+
+- **JMeter:** Para simular alta concurrencia
+- **Postman:** Para validar respuestas y tiempos
+
+![postman_test_carga](./public/images/postman_test_carga.png)
+![jmeter_test_carga](./public/images/jmeter_test_carga.png)
+
+### Interpretacion de resultados
+
+...

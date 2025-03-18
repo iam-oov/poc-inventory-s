@@ -1,0 +1,539 @@
+{
+	"info": {
+		"_postman_id": "c0b1f36d-30b4-47c6-ad23-1a445272cef8",
+		"name": "S-inventory",
+		"description": "Endpoints",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "774210",
+		"_collection_link": "https://www.postman.com/oh-team/workspace/s-inventory/collection/774210-c0b1f36d-30b4-47c6-ad23-1a445272cef8?action=share&source=collection_link&creator=774210"
+	},
+	"item": [
+		{
+			"name": "Products",
+			"item": [
+				{
+					"name": "Create a new product",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Debe regresar un código 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Debe devolver un id en la respuesta\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data).to.have.property(\"id\");",
+									"    pm.expect(jsonData.data.id).to.be.a(\"number\");",
+									"});",
+									"",
+									"pm.test(\"Guardar el id a nivel collection\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    const id = jsonData.data.id",
+									"    pm.collectionVariables.set(\"productId\", id);",
+									"});",
+									"",
+									"/*",
+									"pm.test(\"Guardar el name a nivel collection\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    const name = jsonData.data.name",
+									"    pm.collectionVariables.set(\"newProductName\", name);",
+									"});",
+									"*/",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.unset(\"newProductName\");",
+									"pm.collectionVariables.unset(\"productId\");"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"{{$randomProductName}}\",\n    \"description\": \"{{$randomLoremParagraph}}\",\n    \"price\": \"{{$randomPrice}}\",\n    \"sku\": \"{{$randomCreditCardMask}}\",\n    \"category\": \"{{$randomProductMaterial}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{DOMAIN}}/api/v1/products",
+							"host": [
+								"{{DOMAIN}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get product by id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Debe regresar un código 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Debe devolver un id en la respuesta\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data).to.have.property(\"id\");",
+									"    pm.expect(jsonData.data.id).to.be.a(\"number\");",
+									"});",
+									"",
+									"pm.test(\"El ID del producto debe coincidir con el ID guardado\", function () {",
+									"    const jsonData = pm.response.json();",
+									"\tconst savedProductId = pm.collectionVariables.get(\"productId\");",
+									"    pm.expect(jsonData.data).to.have.property(\"id\");",
+									"    pm.expect(jsonData.data.id).to.be.a(\"number\");  ",
+									"    pm.expect(jsonData.data.id).to.equal(savedProductId);",
+									"});",
+									"",
+									"pm.test(\"Debe devolver un name en la respuesta\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data).to.have.property(\"name\");",
+									"    pm.expect(jsonData.data.name).to.be.a(\"string\");",
+									"});",
+									"",
+									"pm.test(\"Debe devolver un description en la respuesta\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data).to.have.property(\"description\");",
+									"    pm.expect(jsonData.data.description).to.be.a(\"string\");",
+									"});",
+									"",
+									"pm.test(\"Debe devolver un category en la respuesta\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data).to.have.property(\"category\");",
+									"    pm.expect(jsonData.data.category).to.be.a(\"string\");",
+									"});",
+									"",
+									"pm.test(\"Debe devolver un price en la respuesta\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data).to.have.property(\"price\");",
+									"    pm.expect(jsonData.data.price).to.be.a(\"number\");",
+									"});",
+									"",
+									"pm.test(\"Debe devolver un sku en la respuesta\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data).to.have.property(\"sku\");",
+									"    pm.expect(jsonData.data.sku).to.be.a(\"string\");",
+									"});",
+									"",
+									"pm.test(\"El NAME del producto debe coincidir con el NAME guardado\", function () {",
+									"    const jsonData = pm.response.json();",
+									"\tconst savedProductName = pm.collectionVariables.get(\"newProductName\") || null;",
+									"",
+									"    if (!savedProductName) {",
+									"        pm.response.to.have.status(200);",
+									"    } else {",
+									"        pm.expect(jsonData.data).to.have.property(\"name\");",
+									"        pm.expect(jsonData.data.name).to.be.a(\"string\");  ",
+									"        pm.expect(jsonData.data.name).to.equal(savedProductName);",
+									"    }",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{DOMAIN}}/api/v1/products/{{productId}}",
+							"host": [
+								"{{DOMAIN}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"products",
+								"{{productId}}"
+							],
+							"query": [
+								{
+									"key": "category",
+									"value": "ME",
+									"disabled": true
+								},
+								{
+									"key": "price",
+									"value": "58.24",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update product by id",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const newProductName = pm.variables.replaceIn(\"{{$randomProductName}}\");",
+									"pm.collectionVariables.set(\"newProductName\", newProductName);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"{{newProductName}}\",\n    \"description\": \"{{$randomLoremParagraph}}\",\n    \"price\": \"{{$randomPrice}}\",\n    \"sku\": \"{{$randomCreditCardMask}}\",\n    \"category\": \"{{$randomProductMaterial}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{DOMAIN}}/api/v1/products/{{productId}}",
+							"host": [
+								"{{DOMAIN}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"products",
+								"{{productId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[CLONE] Get product by id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Debe regresar un código 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Debe devolver un id en la respuesta\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data).to.have.property(\"id\");",
+									"    pm.expect(jsonData.data.id).to.be.a(\"number\");",
+									"});",
+									"",
+									"pm.test(\"El ID del producto debe coincidir con el ID guardado\", function () {",
+									"    const jsonData = pm.response.json();",
+									"\tconst savedProductId = pm.collectionVariables.get(\"productId\");",
+									"    pm.expect(jsonData.data).to.have.property(\"id\");",
+									"    pm.expect(jsonData.data.id).to.be.a(\"number\");  ",
+									"    pm.expect(jsonData.data.id).to.equal(savedProductId);",
+									"});",
+									"",
+									"pm.test(\"Debe devolver un name en la respuesta\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data).to.have.property(\"name\");",
+									"    pm.expect(jsonData.data.name).to.be.a(\"string\");",
+									"});",
+									"",
+									"pm.test(\"Debe devolver un description en la respuesta\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data).to.have.property(\"description\");",
+									"    pm.expect(jsonData.data.description).to.be.a(\"string\");",
+									"});",
+									"",
+									"pm.test(\"Debe devolver un category en la respuesta\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data).to.have.property(\"category\");",
+									"    pm.expect(jsonData.data.category).to.be.a(\"string\");",
+									"});",
+									"",
+									"pm.test(\"Debe devolver un price en la respuesta\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data).to.have.property(\"price\");",
+									"    pm.expect(jsonData.data.price).to.be.a(\"number\");",
+									"});",
+									"",
+									"pm.test(\"Debe devolver un sku en la respuesta\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data).to.have.property(\"sku\");",
+									"    pm.expect(jsonData.data.sku).to.be.a(\"string\");",
+									"});",
+									"",
+									"pm.test(\"El NAME del producto debe coincidir con el NAME guardado\", function () {",
+									"    const jsonData = pm.response.json();",
+									"\tconst savedProductName = pm.collectionVariables.get(\"newProductName\") || null;",
+									"",
+									"    if (!savedProductName) {",
+									"        pm.response.to.have.status(200);",
+									"    } else {",
+									"        pm.expect(jsonData.data).to.have.property(\"name\");",
+									"        pm.expect(jsonData.data.name).to.be.a(\"string\");  ",
+									"        pm.expect(jsonData.data.name).to.equal(savedProductName);",
+									"    }",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{DOMAIN}}/api/v1/products/{{productId}}",
+							"host": [
+								"{{DOMAIN}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"products",
+								"{{productId}}"
+							],
+							"query": [
+								{
+									"key": "category",
+									"value": "ME",
+									"disabled": true
+								},
+								{
+									"key": "price",
+									"value": "58.24",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{DOMAIN}}/api/v1/products?page=3&limit=1000",
+							"host": [
+								"{{DOMAIN}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"products"
+							],
+							"query": [
+								{
+									"key": "category",
+									"value": "ME",
+									"disabled": true
+								},
+								{
+									"key": "price",
+									"value": "58.24",
+									"disabled": true
+								},
+								{
+									"key": "sku",
+									"value": "1901",
+									"disabled": true
+								},
+								{
+									"key": "page",
+									"value": "3"
+								},
+								{
+									"key": "limit",
+									"value": "1000"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete product by id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"new.ltio\",\n    \"description\": \"{{$randomLoremParagraph}}\",\n    \"price\": \"{{$randomPrice}}\",\n    \"sku\": \"{{$randomCreditCardMask}}\",\n    \"category\": \"{{$randomProductMaterial}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{DOMAIN}}/api/v1/products/11",
+							"host": [
+								"{{DOMAIN}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"products",
+								"11"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Stores",
+			"item": [
+				{
+					"name": "Get inventory by storeId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{DOMAIN}}/api/v1/stores/0101/inventory",
+							"host": [
+								"{{DOMAIN}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"stores",
+								"0101",
+								"inventory"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Inventories",
+			"item": [
+				{
+					"name": "Transfer product",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"sourceStoreId\": \"0101\",\n\t\"toStoreId\": \"aa\",\n\t\"productId\": 1,\n\t\"quantity\": 1,\n\t\"type\": \"transfer\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{DOMAIN}}/api/v1/inventories/transfer",
+							"host": [
+								"{{DOMAIN}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"inventories",
+								"transfer"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get inventories with low stock",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{DOMAIN}}/api/v1/inventories/alerts",
+							"host": [
+								"{{DOMAIN}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"inventories",
+								"alerts"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Check health",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{DOMAIN}}/health",
+					"host": [
+						"{{DOMAIN}}"
+					],
+					"path": [
+						"health"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "productId",
+			"value": ""
+		}
+	]
+}
