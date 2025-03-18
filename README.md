@@ -25,7 +25,6 @@ El sistema ha sido diseñado siguiendo principios de arquitectura hexagonal comb
 
 En esta solución, intencionalmente no se ha establecido una relación de clave foránea (FK) con la tabla "Stores". De hecho, esta tabla **no existe** en el diagrama por una razón específica:
 
-> [!IMPORTANT]
 > La implementación simula un escenario empresarial real donde las grandes corporaciones no exponen directamente su base de datos central. En lugar de eso, proporcionan acceso a través de APIs externas que se identifican mediante el ID de la tienda.
 
 **Esta decisión arquitectónica permite:**
@@ -34,12 +33,32 @@ En esta solución, intencionalmente no se ha establecido una relación de clave 
 - [x] Integración con sistemas legacy sin modificaciones invasivas
 - [x] Robustez ante cambios en sistemas externos
 
+## Tecnologías utilizadas
+
+- Framework: NestJS
+- Base de datos: Postgresl con TypeORM
+- Documentación API: Swagger
+
 ## Development pasos
 
-1. Clonar el proyecto
-2. Crear un archivo `.env` basado en el archivo `.env.example`
-3. Levantar los contenedores con `docker compose up --build -d`
-4. Ejecutar el comando para inicializar la DB usando `docker compose exec s-inventory npm run m:run`
+```bash
+# Clonar el proyecto
+git clone git@github.com:iam-oov/technical-test-inventory.git
+cd technical-test-inventory
+
+# Configuración del entorno
+cp .env.example .env
+# Editar archivo .env con las credenciales necesarias
+
+# Ejecución del proyecto
+docker compose up --build -d
+
+# Aplicar migraciones a la BD
+docker compose exec s-inventory npm run m:run
+
+# Ejecución del endpoint health para validar el correcto funcionamiento
+http://localhost:3001/health
+```
 
 ## Configuración de Migraciones
 
