@@ -86,4 +86,4 @@ http://localhost:3001/api
 ```
 
 > [!NOTE]
-> Se ha priorizado la implementación y documentación detallada solo en los primeros dos endpoints de productos. El resto de endpoints siguen la misma estructura y convenciones por default, y pueden ser consultados en la documentación interactiva.
+> Se ha priorizado la implementación y documentación detallada solo en los dos primeros endpoints de productos. El resto de endpoints siguen la misma estructura y convenciones por default, y pueden ser consultados en la documentación interactiva.
