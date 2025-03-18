@@ -3,10 +3,12 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { DB } from './utils/constants';
-import { envs } from './configs';
+import { envs, PRODUCTION } from './configs';
 import { ProductModule } from './products/product.module';
 import { InventoryModule } from './inventories/inventory.module';
 import { HealthCheckModule } from './shared/health-check/health-check.module';
+
+console.log('envs', envs.db);
 
 @Module({
   imports: [
@@ -14,11 +16,17 @@ import { HealthCheckModule } from './shared/health-check/health-check.module';
     TypeOrmModule.forRoot({
       name: DB.WRITE_CONNECTION,
       type: envs.db.dialect as any,
-      host: envs.db.host,
-      port: envs.db.port,
-      username: envs.db.username,
-      password: envs.db.password,
-      database: envs.db.database,
+      ...(envs.nodeEnv === PRODUCTION
+        ? {
+            url: envs.db.url,
+          }
+        : {
+            host: envs.db.host,
+            port: envs.db.port,
+            username: envs.db.username,
+            password: envs.db.password,
+            database: envs.db.database,
+          }),
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: false,
     }),
@@ -26,11 +34,17 @@ import { HealthCheckModule } from './shared/health-check/health-check.module';
     TypeOrmModule.forRoot({
       name: DB.READ_CONNECTION,
       type: envs.db.dialect as any,
-      host: envs.db.host,
-      port: envs.db.port,
-      username: envs.db.username,
-      password: envs.db.password,
-      database: envs.db.database,
+      ...(envs.nodeEnv === PRODUCTION
+        ? {
+            url: envs.db.url,
+          }
+        : {
+            host: envs.db.host,
+            port: envs.db.port,
+            username: envs.db.username,
+            password: envs.db.password,
+            database: envs.db.database,
+          }),
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: false,
     }),

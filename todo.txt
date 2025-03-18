@@ -1,7 +1,6 @@
-
-- readme
-- seed
 - deploy
+- seed
+- index a la DB para la busqueda del paginador
 - empezar el curso de test de devtalles
 - quitar los mensajes hardcode de transfer-inventory.handler.ts
 - [-] al momento de regresar los productos como un objeto anidado quitar su description para regresar response mas ligeros
