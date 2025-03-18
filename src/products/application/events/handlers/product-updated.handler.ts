@@ -13,7 +13,7 @@ export class ProductUpdatedHandler
     const { name } = event.data;
     const { id } = event;
 
-    this.logger.log(`New product "${name} (${id})" created`);
+    this.logger.log(`Product #${id} (${name}) has been updated.`);
 
     // Here you could trigger side effects:
     // - Send welcome email to product owner

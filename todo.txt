@@ -1,5 +1,4 @@
-- swagger
-- test con postman
+
 - readme
 - seed
 - deploy
