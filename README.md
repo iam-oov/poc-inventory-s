@@ -60,7 +60,7 @@ docker compose exec s-inventory npm run m:run
 http://localhost:3001/health
 ```
 
-## Configuración de Migraciones
+## (Opcional) Configuración de Migraciones
 
 En entornos de desarrollo y producción, la opción `synchronize` se ha configurado en `false`. Esto requiere que los desarrolladores gestionen las migraciones manualmente.
 
@@ -76,3 +76,26 @@ npm run m:revert     # Revierte la última migración aplicada
 > Debe crearse una migración al iniciar el proyecto y cada vez que se modifique cualquier archivo `*.entity.ts` para persistir los cambios en la base de datos.
 
 Asegúrate de ejecutar estos comandos según sea necesario para mantener la base de datos en sincronía con las entidades del proyecto.
+
+## Endpoints principales
+
+- GET /api/products
+- - Listar todos los productos
+- - Filtros por: categoría, precio, stock
+- - Paginación
+- GET /api/products/{id}
+- - Obtener detalle de un producto
+- POST /api/products
+- - Crear nuevo producto
+- - Validación de datos obligatorios
+- PUT /api/products/{id}
+- - Actualizar producto existente
+- DELETE /api/products/{id}
+- - Eliminar producto
+- GET /api/stores/{id}/inventory
+- - Listar inventario por tienda
+- POST /api/inventory/transfer
+- - Transferir productos entre tiendas
+- - Validación de stock disponible
+- GET /api/inventory/alerts
+- - Listar productos con stock bajo
