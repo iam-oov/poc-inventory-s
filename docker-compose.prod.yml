@@ -1,6 +1,6 @@
 services:
   s-inventory:
-    image: s-inventory-prod
+    image: us-central1-docker.pkg.dev/s-inventory/docker-repo/s-inventory-p
     build:
       context: .
       dockerfile: Dockerfile.prod
