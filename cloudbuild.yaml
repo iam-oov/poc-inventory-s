@@ -8,6 +8,12 @@ steps:
         "-f",
         "Dockerfile.prod",
         "--platform=linux/amd64",
+        "--build-arg",
+        "DB_DIALECT=$(cat .env.prod | grep DB_DIALECT | cut -d '=' -f2)",
+        "--build-arg",
+        "PORT=$(cat .env.prod | grep PORT | cut -d '=' -f2)",
+        "--build-arg",
+        "DB_URL=$(cat .env.prod | grep DB_URL | cut -d '=' -f2)",
         ".",
       ]
   - name: "gcr.io/cloud-builders/docker"
