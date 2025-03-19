@@ -4,7 +4,7 @@ steps:
   args:
     - -c
     - |
-      docker build -t us-central1-docker.pkg.dev/s-inventory/docker-repo/s-inventory-p -f Dockerfile.prod --platform=linux/amd64 --build-arg DB_DIALECT=$$DB_DIALECT --build-arg PORT=$$PORT --build-arg DB_URL=$$DB_URL.
+      docker build -t us-central1-docker.pkg.dev/s-inventory/docker-repo/s-inventory-p -f Dockerfile.prod --platform=linux/amd64 --build-arg DB_DIALECT=$$DB_DIALECT --build-arg PORT=$$PORT --build-arg DB_URL=$$DB_URL .
   secretEnv: ['DB_DIALECT', 'PORT', 'DB_URL']
 
 - name: 'gcr.io/cloud-builders/docker'
@@ -22,3 +22,6 @@ availableSecrets:
     env: 'PORT'
   - versionName: projects/1010063875440/secrets/db_url/versions/1
     env: 'DB_URL'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
