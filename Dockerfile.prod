@@ -23,10 +23,6 @@ ENV PORT=$PORT
 ARG DB_URL
 ENV DB_URL=$DB_URL
 
-RUN echo "DB_DIALECT::: $DB_DIALECT";
-RUN echo "PORT::: $PORT";
-RUN echo "DB_URL::: $DB_URL";
-
 WORKDIR /usr/src/app
 
 COPY --from=deps /usr/src/app/node_modules ./node_modules
