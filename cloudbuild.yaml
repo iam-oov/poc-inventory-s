@@ -16,3 +16,5 @@ steps:
         "push",
         "us-central1-docker.pkg.dev/s-inventory/docker-repo/s-inventory-p",
       ]
+options:
+  logging: CLOUD_LOGGING_ONLY
