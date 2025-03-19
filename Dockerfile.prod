@@ -1,4 +1,6 @@
+# =============
 # dependecies
+# =============
 FROM node:21-alpine3.19 AS deps
 
 WORKDIR /usr/src/app
@@ -7,8 +9,9 @@ COPY package*.json ./
 
 RUN npm i
 
-
+# =============
 # builder
+# =============
 FROM node:21-alpine3.19 AS build
 
 ARG DB_DIALECT
@@ -19,6 +22,10 @@ ENV PORT=$PORT
 
 ARG DB_URL
 ENV DB_URL=$DB_URL
+
+RUN echo "DB_DIALECT::: $DB_DIALECT";
+RUN echo "PORT::: $PORT";
+RUN echo "DB_URL::: $DB_URL";
 
 WORKDIR /usr/src/app
 
@@ -31,7 +38,9 @@ RUN npm ci -f --only=production && npm cache clean --force
 # RUN npm run m:generate:prod
 RUN npm run m:run:prod
 
+# =============
 # runner
+# =============
 FROM node:21-alpine3.19 AS prod
 
 WORKDIR /usr/src/app

@@ -1,26 +1,24 @@
 steps:
-  - name: "gcr.io/cloud-builders/docker"
-    args:
-      [
-        "build",
-        "-t",
-        "us-central1-docker.pkg.dev/s-inventory/docker-repo/s-inventory-p",
-        "-f",
-        "Dockerfile.prod",
-        "--platform=linux/amd64",
-        "--build-arg",
-        "DB_DIALECT=$(cat .env.prod | grep DB_DIALECT | cut -d '=' -f2)",
-        "--build-arg",
-        "PORT=$(cat .env.prod | grep PORT | cut -d '=' -f2)",
-        "--build-arg",
-        "DB_URL=$(cat .env.prod | grep DB_URL | cut -d '=' -f2)",
-        ".",
-      ]
-  - name: "gcr.io/cloud-builders/docker"
-    args:
-      [
-        "push",
-        "us-central1-docker.pkg.dev/s-inventory/docker-repo/s-inventory-p",
-      ]
-options:
-  logging: CLOUD_LOGGING_ONLY
+- name: 'gcr.io/cloud-builders/docker'
+  entrypoint: 'bash'
+  args:
+    - -c
+    - |
+      docker build -t us-central1-docker.pkg.dev/s-inventory/docker-repo/s-inventory-p -f Dockerfile.prod --platform=linux/amd64 --build-arg DB_DIALECT=$$DB_DIALECT --build-arg PORT=$$PORT --build-arg DB_URL=$$DB_URL.
+  secretEnv: ['DB_DIALECT', 'PORT', 'DB_URL']
+
+- name: 'gcr.io/cloud-builders/docker'
+  args:
+    [
+      'push',
+      'us-central1-docker.pkg.dev/s-inventory/docker-repo/s-inventory-p',
+    ]
+
+availableSecrets:
+  secretManager:
+  - versionName: projects/1010063875440/secrets/db_dialect/versions/1
+    env: 'DB_DIALECT'
+  - versionName: projects/1010063875440/secrets/port/versions/1
+    env: 'PORT'
+  - versionName: projects/1010063875440/secrets/db_url/versions/1
+    env: 'DB_URL'
