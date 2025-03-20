@@ -1,8 +1,11 @@
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
   <a href="https://swagger.io/" target="blank"><img src="https://static-00.iconduck.com/assets.00/swagger-icon-512x512-halz44im.png" width="120" alt="Swagger Logo" /></a>
-  <a href="https://www.postgresql.org/" target="blank"><img src="https://www.postgresql.org/media/img/about/press/elephant.png" width="120" alt="Postgresql logl" /></a>
-  <a href="https://www.docker.com/" target="blank"><img src="https://svgmix.com/uploads/9e11e2-docker-icon.svg" width="120" alt="Docker logl" /></a>
+  <a href="https://www.postgresql.org/" target="blank"><img src="https://www.postgresql.org/media/img/about/press/elephant.png" width="120" alt="Postgresql logo" /></a>
+  <a href="https://www.docker.com/" target="blank"><img src="https://svgmix.com/uploads/9e11e2-docker-icon.svg" width="120" alt="Docker logo" /></a>
+  <a href="https://cloud.google.com/?hl=es" target="blank"><img src="https://static-00.iconduck.com/assets.00/google-cloud-icon-2048x1646-7admxejz.png" width="120" alt="gcp logo" /></a>
+  <a href="https://cloud.google.com/kubernetes-engine?hl=es-419" target="blank"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Kubernetes_logo_without_workmark.svg/791px-Kubernetes_logo_without_workmark.svg.png" width="120" alt="k8s logo" /></a>
+
 </p>
 
 # S-Inventory - Technical test
@@ -92,6 +95,9 @@ http://localhost:3001/api
 
 ## Testing
 
+> [!IMPORTANT]
+> Ejecute todas las pruebas en entorno local (localhost) para evitar generar costos innecesarios y preservar los límites gratuitos de los servicios en la nube.
+
 En esta sección describo las pruebas que he realizado para verificar el funcionamiento y rendimiento de la API.
 
 ### Test de integración
@@ -147,3 +153,36 @@ cp .env.example .env.prod
 # Construcción de la imagen
 docker compose -f docker-compose.prod.yml --env-file .env.prod build
 ```
+
+## Infraestructura de Despliegue
+
+### Pipeline de CI/CD
+
+Un archivo de configuración personalizado cloudbuild.yaml define nuestro proceso de construcción:
+
+- Se activa automáticamente con los push a la rama `main`
+- Construye imágenes Docker con un versionado consistente
+- Publica las imágenes en `Google Cloud Artifact Registry`
+
+![cloud-build](./public/images/cloud-build.png)
+
+### Despliegue en Kubernetes
+
+La aplicación se despliega en un clúster de Google Kubernetes Engine (GKE):
+
+- Infraestructura definida como código utilizando charts de Helm
+- Orquestación automatizada de despliegue
+- Arquitectura containerizada escalable
+- Balanceo de carga y gestión de tráfico
+
+![gke](./public/images/gke.png)
+
+### Arquitectura de Base de Datos
+
+Los servicios de base de datos de producción son proporcionados por NeonTech:
+
+- Base de datos PostgreSQL serverless
+- Escalado automático y alta disponibilidad
+- Mecanismos integrados de respaldo y recuperación
+
+![neontech](public/images/neontech.png)
