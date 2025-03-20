@@ -4,10 +4,6 @@ import { join } from 'path';
 
 import { envs, PRODUCTION } from './configs';
 
-console.log('🚀 ~ PRODUCTION:', PRODUCTION);
-console.log('🚀 ~ envs:', envs.db);
-console.log('🚀 ~ envs:', envs.nodeEnv);
-
 export const AppDataSource = new DataSource({
   type: envs.db.dialect as any,
   ...(envs.nodeEnv === PRODUCTION
