@@ -62,7 +62,7 @@ docker compose up --build -d
 docker compose exec s-inventory npm run m:run
 
 # Ejecución del endpoint health para validar el correcto funcionamiento
-http://localhost:3001/health
+http://localhost:3001
 ```
 
 ## (Opcional) Configuración de Migraciones
@@ -82,7 +82,7 @@ npm run m:revert     # Revierte la última migración aplicada
 
 Asegúrate de ejecutar estos comandos según sea necesario para mantener la base de datos en sincronía con las entidades del proyecto.
 
-## Documentación completa
+## Documentación completa API
 
 La documentación completa de la API está disponible en:
 
