@@ -8,7 +8,7 @@
 
 </p>
 
-### Api publica expuesta en `http://34.111.107.44/`
+### Api publica expuesta en `http://34.111.107.44/api`
 
 # S-Inventory - Technical test
 
