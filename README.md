@@ -53,7 +53,7 @@ cd technical-test-inventory
 
 # Configuración del entorno
 cp .env.example .env
-# Editar archivo .env.prod con las credenciales necesarias y quitando las secciones que no son necesarias
+# Editar archivo .env con las credenciales necesarias y quitando las secciones que no son necesarias
 
 # Ejecución del proyecto
 docker compose up --build -d
