@@ -83,3 +83,8 @@ kubectl get secret <nombre> -o yaml > <nombre>.yml
 ```
 kubectl create -f <nombre>.yml
 ```
+
+## Cambiar el contexto de k8s
+
+kubectl config get-contexts
+kubectl config use-context <nombre>

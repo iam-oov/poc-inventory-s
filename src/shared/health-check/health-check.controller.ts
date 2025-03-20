@@ -6,6 +6,8 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
+import { appConfig } from '../../configs';
+
 @ApiTags('Health')
 @Controller('/')
 export class HealthCheckController {
@@ -42,6 +44,7 @@ export class HealthCheckController {
     return {
       status: 'ok',
       timestamp: new Date().toISOString(),
+      apiVersion: appConfig.APP_VERSION,
     };
   }
 }
