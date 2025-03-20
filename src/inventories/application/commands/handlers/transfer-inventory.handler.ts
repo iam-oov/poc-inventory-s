@@ -155,8 +155,6 @@ export class TransferInventoryHandler
     );
     await this.inventoryRepository.save(toStoreInventory, queryRunner.manager);
 
-    console.log('🚀 ~ sourceStoreInventory:', sourceStoreInventory);
-
     this.eventBus.publish(
       new LowStockActivatedEvent({
         id: sourceStoreInventory.id,

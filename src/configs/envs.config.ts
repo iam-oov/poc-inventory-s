@@ -2,8 +2,8 @@ import 'dotenv/config';
 import * as joi from 'joi';
 import { BaseDataSourceOptions } from 'typeorm/data-source/BaseDataSourceOptions';
 
-const DEVELOPMENT = 'development';
-const PRODUCTION = 'production';
+export const DEVELOPMENT = 'development';
+export const PRODUCTION = 'production';
 
 const { NODE_ENV = DEVELOPMENT } = process.env;
 
@@ -14,6 +14,7 @@ interface IEnvVars {
   DB_PASSWORD: string;
   DB_PORT: number;
   DB_USERNAME: string;
+  DB_URL: string;
   PORT: number;
   NODE_ENV: string;
   IS_DEV: boolean;
@@ -40,6 +41,36 @@ const envVarsSchema = joi
       .required(),
     PORT: joi.number().required(),
     IS_DEV: joi.boolean(),
+    DB_HOST: joi.when('NODE_ENV', {
+      is: DEVELOPMENT,
+      then: joi.string().required(),
+      otherwise: joi.string().optional(),
+    }),
+    DB_PORT: joi.when('NODE_ENV', {
+      is: DEVELOPMENT,
+      then: joi.number().required(),
+      otherwise: joi.number().optional(),
+    }),
+    DB_USERNAME: joi.when('NODE_ENV', {
+      is: DEVELOPMENT,
+      then: joi.string().required(),
+      otherwise: joi.string().optional(),
+    }),
+    DB_PASSWORD: joi.when('NODE_ENV', {
+      is: DEVELOPMENT,
+      then: joi.string().required(),
+      otherwise: joi.string().optional(),
+    }),
+    DB_DATABASE: joi.when('NODE_ENV', {
+      is: DEVELOPMENT,
+      then: joi.string().required(),
+      otherwise: joi.string().optional(),
+    }),
+    DB_URL: joi.when('NODE_ENV', {
+      is: PRODUCTION,
+      then: joi.string().required(),
+      otherwise: joi.string().optional(),
+    }),
   })
   .unknown(true);
 
@@ -51,7 +82,7 @@ const { error, value } = envVarsSchema.validate({
 
 if (error) {
   throw new Error(
-    `[ENV: ${NODE_ENV}] Config validation error: ${error.message}`,
+    `[ENV: ${NODE_ENV}] Config validation error: ${error.message},`,
   );
 }
 
@@ -68,5 +99,6 @@ export const envs = {
     username: envVars.DB_USERNAME,
     password: envVars.DB_PASSWORD,
     database: envVars.DB_DATABASE,
+    url: envVars.DB_URL,
   },
 };
