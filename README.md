@@ -8,6 +8,8 @@
 
 </p>
 
+### Api publica expuesta en `http://34.111.107.44/`
+
 # S-Inventory - Technical test
 
 Este proyecto implementa una API REST para la gestión correcta del inventario de una cadena de tiendas minoristas, permitiendo el control y monitoreo de productos.
