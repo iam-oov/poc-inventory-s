@@ -128,10 +128,11 @@ Utilicé `Postman Collection Runner` para automatizar un flujo de pruebas comple
 ### Test de carga: JMeter y Postman
 
 Configuración
-Endpoints analizados: Elegí dos puntos críticos de la API:
 
-- Creación de productos (POST)
-- Listado de órdenes (GET)
+- Base de datos con +30,000 registros dummy.
+- Endpoints analizados: Elegí dos puntos críticos de la API:
+  - Creación de productos (POST)
+  - Listado de órdenes (GET)
 
 Herramientas:
 
