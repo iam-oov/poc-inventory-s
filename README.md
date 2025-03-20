@@ -181,7 +181,7 @@ La aplicación se despliega en un clúster de Google Kubernetes Engine (GKE):
 
 ### Arquitectura de Base de Datos
 
-Los servicios de base de datos de producción son proporcionados por NeonTech:
+Los servicios de base de datos de producción son proporcionados por `NeonTech`:
 
 - Base de datos PostgreSQL serverless
 - Escalado automático y alta disponibilidad
