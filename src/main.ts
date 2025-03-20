@@ -13,7 +13,7 @@ async function bootstrap() {
   app.setGlobalPrefix(`api`, {
     exclude: [
       {
-        path: '/health',
+        path: '/',
         method: RequestMethod.GET,
       },
     ],
@@ -38,7 +38,7 @@ async function bootstrap() {
 
   await app.listen(envs.port);
   logger.log(
-    `Main-${appConfig.APP_NAME} is running on: http://localhost:${envs.port}`,
+    `[v${appConfig.APP_VERSION}] Main-${appConfig.APP_NAME} is running on: http://localhost:${envs.port}`,
   );
 }
 bootstrap();

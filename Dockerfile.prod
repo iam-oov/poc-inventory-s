@@ -31,7 +31,6 @@ COPY . ./
 RUN npm run build
 RUN npm ci -f --only=production && npm cache clean --force
 
-# RUN npm run m:generate:prod
 RUN npm run m:run:prod
 
 # =============

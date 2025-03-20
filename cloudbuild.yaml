@@ -20,7 +20,7 @@ availableSecrets:
     env: 'DB_DIALECT'
   - versionName: projects/1010063875440/secrets/port/versions/1
     env: 'PORT'
-  - versionName: projects/1010063875440/secrets/db_url/versions/1
+  - versionName: projects/1010063875440/secrets/db_url/versions/2
     env: 'DB_URL'
 
 options:
