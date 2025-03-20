@@ -160,7 +160,7 @@ docker compose -f docker-compose.prod.yml --env-file .env.prod build
 
 ### Pipeline de CI/CD
 
-Un archivo de configuración personalizado cloudbuild.yaml define nuestro proceso de construcción:
+Un archivo de configuración personalizado `cloudbuild.yaml` define el proceso de construcción:
 
 - Se activa automáticamente con los push a la rama `main`
 - Construye imágenes Docker con un versionado consistente
