@@ -8,7 +8,7 @@ export const AppDataSource = new DataSource({
   type: envs.db.dialect as any,
   ...(envs.nodeEnv === PRODUCTION
     ? {
-        url: envs.db.url,
+        url: envs.db.urlWrite,
       }
     : {
         host: envs.db.host,

@@ -1,11 +1,19 @@
-import 'dotenv/config';
 import * as joi from 'joi';
 import { BaseDataSourceOptions } from 'typeorm/data-source/BaseDataSourceOptions';
+import { config } from 'dotenv';
+import { url } from 'inspector';
 
 export const DEVELOPMENT = 'development';
 export const PRODUCTION = 'production';
 
 const { NODE_ENV = DEVELOPMENT } = process.env;
+
+// Load the appropriate .env file based on the environment
+if (NODE_ENV === PRODUCTION) {
+  config({ path: '.env.prod' });
+} else {
+  config({ path: '.env' });
+}
 
 interface IEnvVars {
   DB_DATABASE: string;
@@ -14,7 +22,8 @@ interface IEnvVars {
   DB_PASSWORD: string;
   DB_PORT: number;
   DB_USERNAME: string;
-  DB_URL: string;
+  DB_URL_WRITE: string;
+  DB_URL_READ: string;
   PORT: number;
   NODE_ENV: string;
   IS_DEV: boolean;
@@ -66,7 +75,12 @@ const envVarsSchema = joi
       then: joi.string().required(),
       otherwise: joi.string().optional(),
     }),
-    DB_URL: joi.when('NODE_ENV', {
+    DB_URL_WRITE: joi.when('NODE_ENV', {
+      is: PRODUCTION,
+      then: joi.string().required(),
+      otherwise: joi.string().optional(),
+    }),
+    DB_URL_READ: joi.when('NODE_ENV', {
       is: PRODUCTION,
       then: joi.string().required(),
       otherwise: joi.string().optional(),
@@ -99,6 +113,7 @@ export const envs = {
     username: envVars.DB_USERNAME,
     password: envVars.DB_PASSWORD,
     database: envVars.DB_DATABASE,
-    url: envVars.DB_URL,
+    urlWrite: envVars.DB_URL_WRITE,
+    urlRead: envVars.DB_URL_READ,
   },
 };

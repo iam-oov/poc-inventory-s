@@ -16,7 +16,7 @@ import { envs, PRODUCTION } from './configs/envs.config';
       type: envs.db.dialect as any,
       ...(envs.nodeEnv === PRODUCTION
         ? {
-            url: envs.db.url,
+            url: envs.db.urlWrite,
           }
         : {
             host: envs.db.host,
@@ -34,7 +34,7 @@ import { envs, PRODUCTION } from './configs/envs.config';
       type: envs.db.dialect as any,
       ...(envs.nodeEnv === PRODUCTION
         ? {
-            url: envs.db.url,
+            url: envs.db.urlRead,
           }
         : {
             host: envs.db.host,

@@ -1,0 +1,225 @@
+name: Deploy Backoffice Service to AWS ECS
+
+# Disparadores: Ejecutar en pushes a main
+on:
+  push:
+    branches:
+      - main
+
+# Variables globales
+env:
+  APP_NAME: backoffice-service # Nombre de la app/repositorio ECR
+  AWS_REGION: ${{ secrets.AWS_REGION }} # Desde secretos de GitHub
+
+# Permisos necesarios para OIDC y lectura de contenido
+permissions:
+  id-token: write # Necesario para autenticación OIDC con AWS
+  contents: read  # Necesario para actions/checkout
+
+jobs:
+  # 1. Job para construir la aplicación NestJS
+  build-app:
+    runs-on: ubuntu-latest
+    outputs:
+      build_dir: dist # Exporta la ubicación del directorio de build para usarlo después
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.x' # O la versión que necesites
+          cache: 'npm' # Habilita el caché para node_modules
+
+      # Nota: El 'before_script' de npm config ya no es necesario si no usas un registro privado de GitLab.
+      # Si usas otro registro privado (ej. GitHub Packages), configura la autenticación aquí.
+      - name: Install dependencies
+        run: npm ci # 'ci' es generalmente preferido en CI/CD que 'install'
+
+      - name: Build application
+        run: npm run build
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-artifact # Nombre del artefacto
+          path: dist/ # Ruta a subir
+
+  # 2. Job para construir y subir la imagen Docker a ECR
+  build-push-docker:
+    runs-on: ubuntu-latest
+    needs: build-app # Depende del job anterior
+    outputs:
+      image_uri: ${{ steps.build-image.outputs.image }} # Exporta la URI de la imagen construida
+      image_tag: ${{ steps.meta.outputs.version }} # Exporta el tag de la imagen
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-artifact
+          path: dist/ # Descarga al directorio dist
+
+      - name: Configure AWS credentials using OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }} # ARN del rol desde secretos
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      # Extrae metadatos como tags para la imagen Docker
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ steps.login-ecr.outputs.registry }}/${{ env.APP_NAME }} # Construye el nombre completo de la imagen ECR
+          tags: |
+            type=ref,event=branch # Tag con el nombre de la rama (ej. stage, master)
+            type=sha,prefix={{branch}}-,format=short # Tag con nombre-rama + short SHA (ej. stage-a1b2c3d)
+
+      - name: Build and push Docker image to ECR
+        id: build-image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }} # Tags generados por metadata-action
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha # Habilita caché de capas Docker
+          cache-to: type=gha,mode=max
+
+  # 3. Job para desplegar a Staging
+  # deploy-stg:
+  #   runs-on: ubuntu-latest
+  #   needs: build-push-docker # Depende del job de Docker
+  #   if: github.ref == 'refs/heads/stage' # Ejecutar solo para la rama 'stage'
+  #   environment: # Opcional: Define un entorno en GitHub para 'stg'
+  #     name: stg
+  #     url: https://api-stg.lasvegasenvivo.com/backoffice # URL del entorno (opcional)
+  #   env:
+  #     # Variables específicas de Staging (obtener de secretos/variables de entorno de GitHub)
+  #     CLUSTER_NAME: ${{ secrets.STG_CLUSTER_NAME }}
+  #     SERVICE_NAME: ${{ secrets.STG_SERVICE_NAME }}
+  #     TASK_FAMILY: ${{ secrets.STG_TASK_FAMILY }} # ej: stg-task-backoffice
+  #     TASK_DEFINITION_MEMORY: 2048
+  #     TASK_DEFINITION_CPU: 1024
+  #     EXECUTION_ROLE_ARN: ${{ secrets.STG_EXECUTION_ROLE_ARN }}
+  #     TASK_ROLE_ARN: ${{ secrets.STG_TASK_ROLE_ARN }} # Puede ser el mismo que execution
+  #     S3_BUCKET: ${{ secrets.STG_S3_BUCKET }}
+  #     ENV_NAME: stg
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v4
+
+  #     - name: Configure AWS credentials using OIDC
+  #       uses: aws-actions/configure-aws-credentials@v4
+  #       with:
+  #         role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+  #         aws-region: ${{ env.AWS_REGION }}
+
+  #     # == Manejo del archivo .env (similar a tu script) ==
+  #     # PRECAUCIÓN: Subir un .env a S3 puede exponer secretos si el bucket no está bien protegido.
+  #     # Considera alternativas como AWS Secrets Manager o Parameter Store inyectados en la Task Definition.
+  #     - name: Create .env file for stg
+  #       # Aquí replicarías la lógica de tu script 'stg-create-envs.sh'
+  #       # O podrías ejecutar el script directamente si lo incluyes en el repo:
+  #       run: |
+  #         echo "Ejecutando script para crear .env..."
+  #         chmod +x scripts/${{ env.ENV_NAME }}-create-envs.sh
+  #         ./scripts/${{ env.ENV_NAME }}-create-envs.sh
+  #         echo "Archivo .env creado"
+
+  #     - name: Upload .env file to S3
+  #       run: aws s3 cp .env s3://${{ env.S3_BUCKET }}/services/${{ env.APP_NAME }}/
+
+  #     # == Despliegue a ECS (Método recomendado con archivo de definición) ==
+  #     - name: Download task definition template
+  #       # Asume que tienes un task-definition.json en tu repo
+  #       # Puedes descargarlo como artefacto si se genera dinámicamente
+  #       run: echo "Asegúrate de tener un archivo task-definition.json"
+
+  #     - name: Render Amazon ECS task definition
+  #       id: render-task-def
+  #       uses: aws-actions/amazon-ecs-render-task-definition@v1
+  #       with:
+  #         task-definition: task-definition.json # Ruta a tu plantilla JSON
+  #         container-name: ${{ env.APP_NAME }} # Nombre del contenedor dentro de la Task Definition
+  #         image: ${{ needs.build-push-docker.outputs.image_uri }} # URI de la imagen del job anterior
+  #         # Opcional: Inyectar variables de entorno aquí si no usas el .env de S3
+  #         # environment-variables: |
+  #         #   VAR1=valor1
+  #         #   VAR2=valor2
+
+  #     - name: Deploy Amazon ECS task definition
+  #       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+  #       with:
+  #         task-definition: ${{ steps.render-task-def.outputs.task-definition }} # Salida del paso anterior
+  #         service: ${{ env.SERVICE_NAME }}
+  #         cluster: ${{ env.CLUSTER_NAME }}
+  #         wait-for-service-stability: true # Espera a que el servicio se estabilice
+
+  # # 4. Job para desplegar a Producción
+  # deploy-prd:
+  #   runs-on: ubuntu-latest
+  #   needs: build-push-docker # Depende del job de Docker
+  #   if: github.ref == 'refs/heads/master' # Ejecutar solo para la rama 'master'
+  #   environment:
+  #     name: prd
+  #     url: https://api.lasvegasenvivo.com/backoffice
+  #   env:
+  #     # Variables específicas de Producción
+  #     CLUSTER_NAME: ${{ secrets.PRD_CLUSTER_NAME }}
+  #     SERVICE_NAME: ${{ secrets.PRD_SERVICE_NAME }}
+  #     TASK_FAMILY: ${{ secrets.PRD_TASK_FAMILY }} # ej: prd-task-backoffice
+  #     TASK_DEFINITION_MEMORY: 4096
+  #     TASK_DEFINITION_CPU: 2048
+  #     EXECUTION_ROLE_ARN: ${{ secrets.PRD_EXECUTION_ROLE_ARN }}
+  #     TASK_ROLE_ARN: ${{ secrets.PRD_TASK_ROLE_ARN }}
+  #     S3_BUCKET: ${{ secrets.PRD_S3_BUCKET }}
+  #     ENV_NAME: prd
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v4
+
+  #     - name: Configure AWS credentials using OIDC
+  #       uses: aws-actions/configure-aws-credentials@v4
+  #       with:
+  #         role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+  #         aws-region: ${{ env.AWS_REGION }}
+
+  #     # == Manejo del archivo .env (similar a stg) ==
+  #     - name: Create .env file for prd
+  #       run: |
+  #         echo "Ejecutando script para crear .env..."
+  #         chmod +x scripts/${{ env.ENV_NAME }}-create-envs.sh
+  #         ./scripts/${{ env.ENV_NAME }}-create-envs.sh
+  #         echo "Archivo .env creado"
+
+  #     - name: Upload .env file to S3
+  #       run: aws s3 cp .env s3://${{ env.S3_BUCKET }}/services/${{ env.APP_NAME }}/
+
+  #     # == Despliegue a ECS (Método recomendado con archivo de definición) ==
+  #     - name: Download task definition template
+  #       run: echo "Asegúrate de tener un archivo task-definition.json" # O descárgalo si es artefacto
+
+  #     - name: Render Amazon ECS task definition
+  #       id: render-task-def
+  #       uses: aws-actions/amazon-ecs-render-task-definition@v1
+  #       with:
+  #         task-definition: task-definition.json # Ruta a tu plantilla JSON
+  #         container-name: ${{ env.APP_NAME }}
+  #         image: ${{ needs.build-push-docker.outputs.image_uri }}
+
+  #     - name: Deploy Amazon ECS task definition
+  #       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+  #       with:
+  #         task-definition: ${{ steps.render-task-def.outputs.task-definition }}
+  #         service: ${{ env.SERVICE_NAME }}
+  #         cluster: ${{ env.CLUSTER_NAME }}
+  #         wait-for-service-stability: true
