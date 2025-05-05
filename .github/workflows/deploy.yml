@@ -8,7 +8,7 @@ on:
 
 # Variables globales
 env:
-  APP_NAME: backoffice-service # Nombre de la app/repositorio ECR
+  APP_NAME: poc/sinventory # Nombre de la app/repositorio ECR
   AWS_REGION: ${{ secrets.AWS_REGION }} # Desde secretos de GitHub
 
 # Permisos necesarios para OIDC y lectura de contenido
