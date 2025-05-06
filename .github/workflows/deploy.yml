@@ -14,7 +14,7 @@ env:
 # Permisos necesarios para OIDC y lectura de contenido
 permissions:
   id-token: write # Necesario para autenticación OIDC con AWS
-  contents: read  # Necesario para actions/checkout
+  contents: read # Necesario para actions/checkout
 
 jobs:
   # 1. Job para construir la aplicación NestJS
@@ -91,6 +91,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
+          file: ./Dockerfile.prod
           push: true
           tags: ${{ steps.meta.outputs.tags }} # Tags generados por metadata-action
           labels: ${{ steps.meta.outputs.labels }}
@@ -167,7 +168,7 @@ jobs:
   #         cluster: ${{ env.CLUSTER_NAME }}
   #         wait-for-service-stability: true # Espera a que el servicio se estabilice
 
-  # # 4. Job para desplegar a Producción
+  # 4. Job para desplegar a Producción
   # deploy-prd:
   #   runs-on: ubuntu-latest
   #   needs: build-push-docker # Depende del job de Docker
